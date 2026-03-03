@@ -68,59 +68,6 @@ Your App ──► oneAPI API ──► Best Provider (OpenAI, Anthropic, Google
 | **Caching** | Redis (rate limiting, session cache) |
 | **Deployment** | vercel |
 
-### Project Structure
-
-```
-oneAPI/
-├── backend/                    # Express + TypeScript API
-│   ├── src/
-│   │   ├── config/             # DB, env, constants
-│   │   ├── controllers/        # Route handlers
-│   │   ├── middlewares/        # Auth, rate-limit, error handling
-│   │   ├── models/             # Mongoose schemas (16 models)
-│   │   ├── routes/             # API route definitions
-│   │   ├── services/           # Business logic & routing engine
-│   │   ├── types/              # TypeScript interfaces
-│   │   ├── utils/              # Helpers, token counting, hashing
-│   │   ├── app.ts              # Express app setup
-│   │   └── server.ts           # Entry point
-│   ├── .env
-│   ├── tsconfig.json
-│   └── package.json
-│
-├── frontend/                   # Next.js 14+ App
-│   ├── src/
-│   │   ├── app/                # App router pages
-│   │   ├── components/         # Reusable UI components
-│   │   ├── lib/                # API client, utils
-│   │   ├── hooks/              # Custom React hooks
-│   │   └── styles/             # Global styles
-│   ├── .env.local
-│   └── package.json
-│
-├── docker-compose.yml
-├── LICENSE
-└── README.md
-```
-
-### Database Schema Overview
-
-```
-User ──┬── API Keys
-       ├── Organizations ── Org Members
-       ├── Apps
-       ├── Wallets ── Transactions
-       ├── Chat Threads ── Messages
-       ├── Presets
-       └── Webhooks
-
-Provider ──► ProviderModel (join) ◄── Model
-
-ApiRequestLog (central hub linking all entities)
-RateLimitRule (polymorphic scoping)
-```
-
-> See [`docs/SCHEMAS.md`](docs/SCHEMAS.md) for full schema definitions and relationships.
 
 ## 📦 Getting Started
 
@@ -143,37 +90,6 @@ cd oneAPI
 ```bash
 cd backend
 npm install
-```
-
-Create a `.env` file:
-
-```env
-NODE_ENV=development
-PORT=8000
-MONGO_URI=mongodb://localhost:27017/oneAPI
-CLIENT_URL=http://localhost:3000
-
-# Auth
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRES_IN=7d
-
-# OAuth
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GITHUB_CLIENT_ID=your-github-client-id
-GITHUB_CLIENT_SECRET=your-github-client-secret
-
-# Stripe
-STRIPE_SECRET_KEY=sk_test_xxx
-STRIPE_WEBHOOK_SECRET=whsec_xxx
-
-# Redis
-REDIS_URL=redis://localhost:6379
-
-# Provider API Keys
-OPENAI_API_KEY=sk-xxx
-ANTHROPIC_API_KEY=sk-ant-xxx
-GOOGLE_AI_API_KEY=xxx
 ```
 
 Start the dev server:
@@ -202,13 +118,6 @@ Start the dev server:
 ```bash
 npm run dev
 # ✅ Frontend running on http://localhost:3000
-```
-
-### 4. Docker (Optional)
-
-```bash
-docker-compose up -d
-# Starts backend, frontend, MongoDB, and Redis
 ```
 
 ## 📡 API Documentation
