@@ -4,7 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 // import compression from "compression";
 
-// import routes from "./routes";
+import routes from "./routes/v1.routes";
 // import errorMiddleware from "./middlewares/error.middleware.ts";
 
 const app = express();
@@ -28,7 +28,7 @@ app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-// app.use("/", routes);
+app.use("/", routes);
 
 // Global error handler
 // app.use(errorMiddleware);

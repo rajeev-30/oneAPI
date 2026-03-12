@@ -1,4 +1,4 @@
-import { baseSchemaFields } from "@utils/base.model";
+import { baseSchemaFields } from "../../utils/base.model";
 import { Schema, model, Document } from "mongoose";
 
 export interface IUser extends Document {
