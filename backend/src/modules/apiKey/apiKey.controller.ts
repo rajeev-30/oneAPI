@@ -6,7 +6,7 @@ import { nameValidation } from "@modules/apiKey/apiKey.validation";
 
 export const generateApiKey = async(req: Request, res:Response) =>{
     try{
-        const key = "sk-or-v1-" + crypto.randomBytes(24).toString("hex");
+        const key = "sk-oneapi-" + crypto.randomBytes(24).toString("hex");
         const result = nameValidation.safeParse(req.body);
         if(!result.success){
             return res.status(400).json({
