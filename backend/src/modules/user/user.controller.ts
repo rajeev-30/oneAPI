@@ -11,9 +11,8 @@ export const SignUp = async (req: Request, res: Response) => {
         
         if(!result.success){
             return res.status(400).json({
-                message: "Validation failed",
-                success: false,
-                error: result.error.issues[0].message
+                message: result.error.issues[0].message,
+                success: false
             });
         }
         
@@ -45,6 +44,7 @@ export const SignUp = async (req: Request, res: Response) => {
         .json({
             message: "User registered successfully",
             success: true,
+            user: newUser
         });
     }catch(error){
         console.log("SignUp failed: " + error);
@@ -62,11 +62,9 @@ export const Login = async (req: Request, res: Response)=> {
         const result = loginInput.safeParse(req.body);
         if(!result.success){
             return res.status(400).json({
-                message: "Validation failed",
-                success: false,
-                error: result.error.issues[0].message
-
-            })
+                message: result.error.issues[0].message,
+                success: false
+            });
         }
         const { email, password } = result.data;
 
@@ -91,7 +89,8 @@ export const Login = async (req: Request, res: Response)=> {
         })
         .json({
             message: "User logged in successfully",
-            success: true
+            success: true,
+            user
         });
     }catch(error){
         console.log("Login failed: " + error);
@@ -112,13 +111,38 @@ export const Logout  = async(_req: Request, res:Response) => {
             sameSite: "strict",
         })
         .json({
-            message: `You logged out successfully`,
-            success: true,
+            message: "You logged out successfully",
+            success: true
         })
     }catch(error){
         console.log("Logout failed: " + error);
         return res.status(500).json({
             message: "Logout failed due to server issue",
+            success: false,
+            error:error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
+export const getUser = async(req:Request, res:Response) => {
+    try{
+        const id = req.userId;
+        const user = await User.findById(id).select("-password");
+        if(!user){
+            return res.status(404).json({
+                message: "User not found",
+                success: false
+            });
+        }
+        res.status(200).json({
+            message: "User found successfully",
+            success: true,
+            user
+        });
+    }catch(error){
+        console.log("GetUser failed: " + error);
+        return res.status(500).json({
+            message: "GetUser failed due to server issue",
             success: false,
             error:error instanceof Error ? error.message : "Unknown error"
         })

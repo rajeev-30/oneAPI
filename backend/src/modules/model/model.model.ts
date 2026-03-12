@@ -1,11 +1,11 @@
 import { baseSchemaFields } from "@utils/base.model";
-import {Schema, model, Document, ObjectId} from "mongoose";
+import {Schema, model, Document, Types} from "mongoose";
 
 export interface IModel extends Document {
     name: string;
     slug: string;
-    provider: ObjectId;
-    pricing: ObjectId;
+    provider: Types.ObjectId;
+    pricing: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }

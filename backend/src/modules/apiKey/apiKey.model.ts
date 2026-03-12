@@ -1,16 +1,16 @@
 import { baseSchemaFields } from "@utils/base.model";
-import {Schema, Document, model, ObjectId} from "mongoose";
+import {Schema, Document, model, Types} from "mongoose";
 
 export interface IApiKey extends Document {
-  name: String;
-  user: ObjectId;
+  name: string;
+  user: Types.ObjectId;
   key: string;
-  totalSpent: Number;
+  totalSpent: number;
   rateLimit: {
     requestsPerMinute: number;
     tokensPerMinute: number;
   };
-  totalTokensUsed: Number;
+  totalTokensUsed: number;
   lastUsedAt: Date;
 }
 

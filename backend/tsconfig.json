@@ -1,29 +1,28 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "target": "ES2020",
+    "module": "commonjs",
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@config/*": ["config/*"],
-      "@modules/*": ["modules/*"],
-      "@services/*": ["services/*"],
-      "@utils/*": ["utils/*"],
-      "@middlewares/*": ["middlewares/*"]
-    }
+      "@utils/*": ["src/utils/*"],
+      "@modules/*": ["src/modules/*"],
+      "@config/*": ["src/config/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@routes/*": ["src/routes/*"],
+      "@types/*": ["src/types/*"],
+      "@services/*": ["src/services/*"]
+    },
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ]
   },
-  "include": ["src"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }

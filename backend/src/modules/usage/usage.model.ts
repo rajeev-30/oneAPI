@@ -1,13 +1,13 @@
-import { model, ObjectId, Schema, Document } from "mongoose";
+import { model, Types, Schema, Document } from "mongoose";
 
 interface IUsage extends Document {
-  user: ObjectId;
+  user: Types.ObjectId;
   month: string;
   totalRequests: number;
   totalTokens: number;
   totalCost: number;
   modelBreakdown: Array<{
-    model: ObjectId;
+    model: Types.ObjectId;
     tokens: number;
     cost: number;
   }>;
