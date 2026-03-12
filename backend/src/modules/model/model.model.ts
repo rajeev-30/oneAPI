@@ -5,7 +5,7 @@ export interface IModel extends Document {
     name: string;
     slug: string;
     provider: Types.ObjectId;
-    pricing: Types.ObjectId;
+    billing: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -25,7 +25,7 @@ const ModelSchema = new Schema<IModel> ({
         ref: "Provider", 
         required: true 
     },
-    pricing: { 
+    billing: { 
         type: Schema.Types.ObjectId, 
         ref: "Billing", 
         required: true 
