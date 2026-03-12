@@ -6,6 +6,6 @@ const router  = Router();
 
 router.route("/").get(authMiddleware, getApiKeys);
 router.route("/:id").delete(authMiddleware, deleteApiKey);
-router.route("/generate").post(authMiddleware, generateApiKey);
+router.route("/").post(authMiddleware, generateApiKey);
 
 export default router;
