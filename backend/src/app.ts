@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 // import compression from "compression";
+import cookieParser from "cookie-parser";
 
 import routes from "./routes/v1.routes";
 // import errorMiddleware from "./middlewares/error.middleware.ts";
@@ -13,7 +14,11 @@ const app = express();
 app.use(helmet());
 
 // Enable CORS
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true, 
+}));
+app.use(cookieParser());
 
 // Compression
 // app.use(compression());

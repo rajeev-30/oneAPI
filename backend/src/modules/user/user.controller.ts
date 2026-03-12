@@ -39,8 +39,8 @@ export const SignUp = async (req: Request, res: Response) => {
         .cookie('token', token, {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
-            secure: true,
-            sameSite: 'strict'
+            secure: process.env.NODE_ENV === "production",
+            sameSite: 'strict',
         })
         .json({
             message: "User registered successfully",
@@ -86,8 +86,8 @@ export const Login = async (req: Request, res: Response)=> {
         .cookie('token', token, {
             httpOnly:true, 
             maxAge: 30 * 24 * 60 * 60 * 1000,
-            secure: true,
-            sameSite: 'strict'
+            secure: process.env.NODE_ENV === "production",
+            sameSite: 'strict',
         })
         .json({
             message: "User logged in successfully",
@@ -97,6 +97,28 @@ export const Login = async (req: Request, res: Response)=> {
         console.log("Login failed: " + error);
         return res.status(500).json({
             message: "Login failed due to server issue",
+            success: false,
+            error:error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
+export const Logout  = async(_req: Request, res:Response) => {
+    try{
+        return res.status(200)
+        .clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        })
+        .json({
+            message: `You logged out successfully`,
+            success: true,
+        })
+    }catch(error){
+        console.log("Logout failed: " + error);
+        return res.status(500).json({
+            message: "Logout failed due to server issue",
             success: false,
             error:error instanceof Error ? error.message : "Unknown error"
         })
