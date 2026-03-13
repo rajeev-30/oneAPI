@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { ProviderInput } from "./provider.validation";
-import { error } from "node:console";
 import Provider from "./provider.model";
 
 

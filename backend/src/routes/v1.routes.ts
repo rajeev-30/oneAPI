@@ -7,10 +7,10 @@ import modelRoute from "../modules/model/model.routes"
 
 const app = express();
 
-app.use("/api/v1/user", userRoute);
-app.use("/api/v1/key", apiKeyRoute);
-app.use("/api/v1/billing", billingRoute);
-app.use("/api/v1/provider", providerRoute);
-app.use("/api/v1/model", modelRoute);
+app.use("/user", userRoute);
+app.use("/key", apiKeyRoute);
+app.use("/billing", billingRoute);
+app.use("/provider", providerRoute);
+app.use("/model", modelRoute);
 
 export default app;

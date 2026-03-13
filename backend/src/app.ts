@@ -33,7 +33,7 @@ app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/", routes);
+app.use("/api/v1", routes);
 
 // Global error handler
 // app.use(errorMiddleware);
