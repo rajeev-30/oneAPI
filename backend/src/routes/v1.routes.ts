@@ -4,6 +4,7 @@ import apiKeyRoute from "../modules/apiKey/apiKey.routes";
 import billingRoute from "../modules/billing/billing.routes";
 import providerRoute from "../modules/provider/provider.routes";
 import modelRoute from "../modules/model/model.routes"
+import gatewayRoute from "../modules/gateway/gateway.routes";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.use("/key", apiKeyRoute);
 app.use("/billing", billingRoute);
 app.use("/provider", providerRoute);
 app.use("/model", modelRoute);
+app.use("/chat", gatewayRoute);
 
 export default app;
