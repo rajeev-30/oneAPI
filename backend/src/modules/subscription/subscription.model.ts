@@ -10,6 +10,8 @@ export interface ISubscription extends Document {
         requestsUsed: number;
         tokensUsed:   number;
     };
+    balance: number;
+    totalSpent: number;
 }
 
 const subscriptionSchema = new Schema<ISubscription>({
@@ -33,7 +35,9 @@ const subscriptionSchema = new Schema<ISubscription>({
     usage: {
         requestsUsed: { type: Number, default: 0 },
         tokensUsed:   { type: Number, default: 0 }
-    }
+    },
+    balance: { type: Number, default: 0 },      // For payg: current credit
+    totalSpent: { type: Number, default: 0 }   // For payg: total spent so far
 }, { timestamps: true });
 
 export default model<ISubscription>("Subscription", subscriptionSchema);

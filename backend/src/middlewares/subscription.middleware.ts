@@ -42,6 +42,23 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
             });
         }
 
+        // ✅ check pay-as-you-go balance if applicable
+        if ((subscription.plan as any).type === "payg") {
+            const cost = 10; // Assume a cost for the request, this should be defined based on your pricing model
+
+            if (subscription.balance < cost) {
+                return res.status(402).json({
+                    message: "Insufficient balance. Please top up.",
+                    success: false
+                });
+            }
+
+            // Deduct cost after successful request
+            subscription.balance -= cost;
+            subscription.totalSpent += cost;
+            await subscription.save();
+        }
+
         // ✅ attach subscription to request
         req.subscription = subscription;
         next();
