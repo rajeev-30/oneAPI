@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ChatChunk } from "../types/types";
+import { costCalculator } from "@utils/costCalculator";
 
 
 export async function* googleChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
@@ -34,13 +35,16 @@ export async function* googleChat({ model, messages, temperature, max_tokens }: 
     const finalResponse  = await result.response;
     promptTokens         = finalResponse.usageMetadata?.promptTokenCount     ?? 0;
     completionTokens     = finalResponse.usageMetadata?.candidatesTokenCount ?? 0;
+    const totalCost = costCalculator(promptTokens, completionTokens, model);
+    
 
     yield {
         done:  true,
         usage: {
             prompt_tokens:     promptTokens,
             completion_tokens: completionTokens,
-            total_tokens:      promptTokens + completionTokens
+            total_tokens:      promptTokens + completionTokens,
+            totalCost
         }
     };
 }

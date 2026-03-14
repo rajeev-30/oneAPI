@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { ChatChunk } from "../types/types";
+import { costCalculator } from "@utils/costCalculator";
 
 
 
@@ -46,12 +47,16 @@ export async function* anthropicChat({ model, messages, temperature, max_tokens 
     const promptTokens     = finalMessage.usage.input_tokens;
     const completionTokens = finalMessage.usage.output_tokens;
 
+    const totalCost = costCalculator(promptTokens, completionTokens, model);
+    
+
     yield {
         done:  true,
         usage: {
             prompt_tokens:     promptTokens,
             completion_tokens: completionTokens,
-            total_tokens:      promptTokens + completionTokens
+            total_tokens:      promptTokens + completionTokens,
+            totalCost
         }
     };
 }

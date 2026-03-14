@@ -3,13 +3,13 @@ import { ChatChunk } from "../types/types";
 import { costCalculator } from "@utils/costCalculator";
 
 
-export async function* grokChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
-    const apiKey = process.env.XAI_API_KEY;
-    if (!apiKey) throw new Error("GROK_API_KEY is not set in .env");
+export async function* nvidiaChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
+    const apiKey = process.env.NVIDIA_API_KEY;
+    if (!apiKey) throw new Error("NVIDIA_API_KEY is not set in .env");
     
     const client = new OpenAI({
         apiKey,
-        baseURL: "https://api.x.ai/v1", // xAI base URL
+        baseURL: "https://integrate.api.nvidia.com/v1", 
     });
     
     const modelName = model.slug;
@@ -34,7 +34,7 @@ export async function* grokChat({ model, messages, temperature, max_tokens }: an
 
     let promptTokens     = 0;
     let completionTokens = 0;
-
+    
     //  yield each chunk
     for await (const chunk of stream) {
         const text         = chunk.choices[0]?.delta?.content ?? "";
@@ -50,9 +50,8 @@ export async function* grokChat({ model, messages, temperature, max_tokens }: an
             completionTokens = chunk.usage.completion_tokens;
         }
     }
-
-    const totalCost = costCalculator(promptTokens, completionTokens, model);
     
+    const totalCost = costCalculator(promptTokens, completionTokens, model);
 
     yield {
         done:  true,

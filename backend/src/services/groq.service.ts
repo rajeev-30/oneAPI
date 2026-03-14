@@ -1,5 +1,6 @@
 import Groq from "groq-sdk";
 import { ChatChunk } from "../types/types";
+import { costCalculator } from "@utils/costCalculator";
 
 
 export async function* groqChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
@@ -45,12 +46,16 @@ export async function* groqChat({ model, messages, temperature, max_tokens }: an
         }
     }
 
+    const totalCost = costCalculator(promptTokens, completionTokens, model);
+    
+
     yield {
         done:  true,
         usage: {
             prompt_tokens:     promptTokens,
             completion_tokens: completionTokens,
-            total_tokens:      promptTokens + completionTokens
+            total_tokens:      promptTokens + completionTokens,
+            totalCost
         }
     };
 }

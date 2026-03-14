@@ -1,10 +1,10 @@
 import { chatCompletionSchema } from "./gateway.validation";
 import { Request, Response } from "express";
 import Model from "@modules/model/model.model";
-import { routeToProvider } from "@modules/provider/provider.service";
 import Subscription from "@modules/subscription/subscription.model";
 import Usage from "@modules/usage/usage.model";
 import { Types } from "mongoose";
+import { routeToProvider } from "@services/providerRouter.service";
 
 export const chatCompletion = async (req: Request, res: Response) => {
     try {
@@ -12,21 +12,35 @@ export const chatCompletion = async (req: Request, res: Response) => {
         if (!result.success) {
             return res.status(400).json({
                 message: result.error.issues[0].message,
-                success: false
+                success: false,
             });
         }
 
-        const { model: modelSlug, messages, stream, temperature, max_tokens } = result.data;
+        const {
+            model: modelSlug,
+            messages,
+            stream,
+            temperature,
+            max_tokens,
+        } = result.data;
 
-        const model = await Model.findOne({ slug: modelSlug }).populate("provider");
+        const model = await Model.findOne({ slug: modelSlug })
+            .populate("provider")
+            .populate("billing");
         if (!model) {
             return res.status(404).json({
                 message: "We currently do not support the requested model",
-                success: false
+                success: false,
             });
         }
 
-        const generator = routeToProvider({ model, messages, temperature, max_tokens, stream });
+        const generator = routeToProvider({
+            model,
+            messages,
+            temperature,
+            max_tokens,
+            stream,
+        });
 
         let usage: any = {}; // <-- Move usage declaration here so it's available in both branches
 
@@ -39,7 +53,9 @@ export const chatCompletion = async (req: Request, res: Response) => {
             for await (const chunk of generator) {
                 if (chunk.done) {
                     usage = chunk.usage; // <-- Assign usage here for streaming
-                    res.write(`data: ${JSON.stringify({ usage: chunk.usage, done: true })}\n\n`);
+                    res.write(
+                        `data: ${JSON.stringify({ usage: chunk.usage, done: true })}\n\n`,
+                    );
                     res.write("data: [DONE]\n\n");
                     res.end();
                 } else {
@@ -61,22 +77,22 @@ export const chatCompletion = async (req: Request, res: Response) => {
                 success: true,
                 data: {
                     choices: [{ message: { role: "assistant", content: fullText } }],
-                    usage
-                }
+                    usage,
+                },
             });
         }
 
-        // update usage after getting response from provider
-        // usage may be undefined if the generator never yields a done chunk
-        if (usage && usage.total_tokens !== undefined && usage.totalCost !== undefined) {
-            await updateUsage(req.userId as string, model._id, usage.total_tokens, usage.totalCost);
-        }
-
+        updateUsage(
+            req.userId as string,
+            model._id,
+            usage.total_tokens,
+            usage.totalCost,
+        );
     } catch (error) {
         res.status(500).json({
             message: "Error in chatCompletion gateway",
             success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
+            error: error instanceof Error ? error.message : "Unknown error",
         });
     }
 };
@@ -86,7 +102,7 @@ const updateUsage = async (
     userId: string,
     modelId: Types.ObjectId,
     totalTokens: number,
-    cost: number
+    cost: number,
 ) => {
     const month = new Date().toISOString().slice(0, 7); // "2026-03"
 
@@ -96,25 +112,44 @@ const updateUsage = async (
         {
             $inc: {
                 "usage.requestsUsed": 1,
-                "usage.tokensUsed": totalTokens
-            }
-        }
+                "usage.tokensUsed": totalTokens,
+            },
+        },
     );
 
-    //  upsert monthly usage record
-    await Usage.findOneAndUpdate(
-        { user: userId, month },
+    // Step 1: Try updating existing model
+    const result = await Usage.updateOne(
+        { user: userId, month, "modelBreakdown.model": modelId },
         {
             $inc: {
                 totalRequests: 1,
                 totalTokens: totalTokens,
-                totalCost: cost
+                totalCost: cost,
+                "modelBreakdown.$.tokens": totalTokens,
+                "modelBreakdown.$.cost": cost,
             },
-            // ✅ update model breakdown
-            $push: {
-                modelBreakdown: { model: modelId, tokens: totalTokens, cost }
-            }
         },
-        { upsert: true }
     );
+
+    // Step 2: If model not found → push new entry
+    if (result.matchedCount === 0) {
+        await Usage.updateOne(
+            { user: userId, month },
+            {
+                $inc: {
+                    totalRequests: 1,
+                    totalTokens: totalTokens,
+                    totalCost: cost,
+                },
+                $push: {
+                    modelBreakdown: {
+                        model: modelId,
+                        tokens: totalTokens,
+                        cost: cost,
+                    },
+                },
+            },
+            { upsert: true },
+        );
+    }
 };
