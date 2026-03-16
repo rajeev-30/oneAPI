@@ -42,8 +42,7 @@ export const chatCompletion = async (req: Request, res: Response) => {
             stream,
         });
 
-        let usage: any = {}; // <-- Move usage declaration here so it's available in both branches
-
+        let usage: any = {}; 
         if (stream) {
             res.setHeader("Content-Type", "text/event-stream");
             res.setHeader("Cache-Control", "no-cache");
@@ -52,10 +51,9 @@ export const chatCompletion = async (req: Request, res: Response) => {
 
             for await (const chunk of generator) {
                 if (chunk.done) {
-                    usage = chunk.usage; // <-- Assign usage here for streaming
-                    res.write(
-                        `data: ${JSON.stringify({ usage: chunk.usage, done: true })}\n\n`,
-                    );
+                    usage = chunk.usage;
+                    res.write(`data: ${JSON.stringify({ usage: chunk.usage, done: true })}\n\n`);
+                    res.write(`data: ${JSON.stringify({ model: modelSlug })}\n\n`);
                     res.write("data: [DONE]\n\n");
                     res.end();
                 } else {
@@ -78,11 +76,12 @@ export const chatCompletion = async (req: Request, res: Response) => {
                 data: {
                     choices: [{ message: { role: "assistant", content: fullText } }],
                     usage,
+                    model: modelSlug
                 },
             });
         }
 
-        updateUsage(
+        return updateUsage(
             req.userId as string,
             model._id,
             usage.total_tokens,

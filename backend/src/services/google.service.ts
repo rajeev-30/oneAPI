@@ -13,14 +13,15 @@ export async function* googleChat({ model, messages, temperature, max_tokens }: 
     const modelName = model.slug; 
     const genModel  = genAI.getGenerativeModel({ model: modelName });
 
-    const contents = messages
-        .filter((msg: any) => msg.role !== "system")
-        .map((msg: any) => ({
-            role:  msg.role === "assistant" ? "model" : "user",
-            parts: [{ text: msg.content }]
-        }));
 
-    const result = await genModel.generateContentStream({ contents });
+    const contents = messages.map((msg: any) => ({
+        role: msg.role === "assistant" || msg.role === "system" ? "model" : "user",
+        parts: [{ text: msg.content }]
+    }));
+
+    const result = await genModel.generateContentStream({ 
+        contents
+    });
 
     let promptTokens     = 0;
     let completionTokens = 0;

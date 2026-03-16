@@ -14,7 +14,7 @@ export async function* anthropicChat({ model, messages, temperature, max_tokens 
 
     const modelName = model.slug; 
 
-    // ✅ separate system message from user/assistant messages
+    //separate system message from user/assistant messages
     const systemMessage = messages.find((msg: any) => msg.role === "system")?.content;
     const chatMessages  = messages
         .filter((msg: any) => msg.role !== "system")
@@ -23,16 +23,16 @@ export async function* anthropicChat({ model, messages, temperature, max_tokens 
             content: msg.content
         }));
 
-    // ✅ stream the response
+    //  stream the response
     const stream = client.messages.stream({
         model:      modelName,
         max_tokens: max_tokens ?? 1024,
         temperature,
-        system:     systemMessage,   // ✅ system message goes here separately
+        system:     systemMessage,   //system message goes here separately
         messages:   chatMessages
     });
 
-    // ✅ yield each text chunk
+    //yield each text chunk
     for await (const chunk of stream) {
         if (
             chunk.type === "content_block_delta" &&
@@ -42,7 +42,7 @@ export async function* anthropicChat({ model, messages, temperature, max_tokens 
         }
     }
 
-    // ✅ get final usage after stream ends
+    // get final usage after stream ends
     const finalMessage   = await stream.finalMessage();
     const promptTokens     = finalMessage.usage.input_tokens;
     const completionTokens = finalMessage.usage.output_tokens;

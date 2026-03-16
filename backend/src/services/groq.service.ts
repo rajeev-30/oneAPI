@@ -12,8 +12,9 @@ export async function* groqChat({ model, messages, temperature, max_tokens }: an
 
     const modelName = model.slug; // "llama-3.3-70b-versatile"
 
-    //  Groq supports system messages natively
-    const chatMessages = messages.map((msg: any) => ({
+    //  separate system messages
+    // const systemMessage = messages.find((msg: any) => msg.role === "system")?.content;
+    const chatMessages  = messages.map((msg: any) => ({
         role:    msg.role as "user" | "assistant" | "system",
         content: msg.content
     }));
