@@ -26,23 +26,6 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
 
         const plan = subscription.plan as any;
 
-        // check monthly request limit
-        if (subscription.usage.requestsUsed >= plan.limits.requestsPerMonth) {
-            return res.status(429).json({
-                message: `Monthly request limit of ${plan.limits.requestsPerMonth} reached.`,
-                success: false
-            });
-        }
-
-        // ✅ check monthly token limit
-        if (subscription.usage.tokensUsed >= plan.limits.tokensPerMonth) {
-            return res.status(429).json({
-                message: `Monthly token limit of ${plan.limits.tokensPerMonth} reached.`,
-                success: false
-            });
-        }
-
-        // ✅ check pay-as-you-go balance if applicable
         if ((subscription.plan as any).type === "payg") {
             const cost = 10; // Assume a cost for the request, this should be defined based on your pricing model
 
@@ -58,6 +41,25 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
             subscription.totalSpent += cost;
             await subscription.save();
         }
+
+        // check daily request limit
+        if (subscription.usage.requestsUsed >= plan.limits.requestsPerDay) {
+            return res.status(429).json({
+                message: `Daily request limit of ${plan.limits.requestsPerDay} reached.`,
+                success: false
+            });
+        }
+
+        // ✅ check daily token limit
+        if (subscription.usage.tokensUsed >= plan.limits.tokensPerDay) {
+            return res.status(429).json({
+                message: `Daily token limit of ${plan.limits.tokensPerDay} reached.`,
+                success: false
+            });
+        }
+
+        // ✅ check pay-as-you-go balance if applicable
+        
 
         // ✅ attach subscription to request
         req.subscription = subscription;

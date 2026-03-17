@@ -10,6 +10,8 @@ export const useChat = () => {
         setResponse("");
         setError(null);
 
+        let finalText = "";
+
         try {
             const res = await fetch("http://localhost:8000/v1/chat/completions", {
                 method: "POST",
@@ -53,6 +55,7 @@ export const useChat = () => {
 
                         if (parsed.text) {
                             // ✅ append each chunk to response
+                            finalText += parsed.text;
                             setResponse(prev => prev + parsed.text);
                         }
 
@@ -64,8 +67,11 @@ export const useChat = () => {
                     }
                 }
             }
+
+            return finalText;
         } catch (err) {
             setError(err instanceof Error ? err.message : "Unknown error");
+            return "";
         } finally {
             setLoading(false);
         }

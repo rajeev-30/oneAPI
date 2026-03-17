@@ -4,11 +4,11 @@ type PlanType = "fixed" | "payg";
 
 interface IPlan extends Document {
     name:        string;   // "Free" | "Pro" | "Enterprise"
-    price:       number;   // per month in USD
+    price:       number;   // per month in INR
     type:        PlanType;
     limits: {
-        requestsPerMonth: number;
-        tokensPerMonth:   number;
+        requestsPerDay: number;
+        tokensPerDay:   number;
         requestsPerMinute: number;
         tokensPerMinute:   number;
     };
@@ -20,9 +20,9 @@ const planSchema = new Schema<IPlan>({
     price: { type: Number, required: true },
     type:  { type: String, required: true },
     limits: {
-        requestsPerMonth:  { type: Number, default: 100   },
-        tokensPerMonth:    { type: Number, default: 10000 },
-        requestsPerMinute: { type: Number, default: 10    },
+        requestsPerDay:  { type: Number, default: 20   },
+        tokensPerDay:    { type: Number, default: 10000 },
+        requestsPerMinute: { type: Number, default: 5    },
         tokensPerMinute:   { type: Number, default: 1000  },
     },
     features: [String]

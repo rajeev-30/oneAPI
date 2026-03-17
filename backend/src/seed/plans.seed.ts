@@ -5,8 +5,8 @@ const plans = [
         name:  "Free",
         price: 0,
         limits: {
-            requestsPerMonth:  100,
-            tokensPerMonth:    50000,
+            requestsPerDay:    20,
+            tokensPerDay:    10000,
             requestsPerMinute: 5,
             tokensPerMinute:   1000,
         },
@@ -16,8 +16,8 @@ const plans = [
         name:  "Pro",
         price: 20,
         limits: {
-            requestsPerMonth:  10000,
-            tokensPerMonth:    5000000,
+            requestsPerDay:    100,
+            tokensPerDay:    100000,
             requestsPerMinute: 60,
             tokensPerMinute:   100000,
         },
@@ -27,10 +27,10 @@ const plans = [
         name:  "Enterprise",
         price: 100,
         limits: {
-            requestsPerMonth:  100000,
-            tokensPerMonth:    50000000,
+            requestsPerDay:  1000,
+            tokensPerDay:    1000000,
             requestsPerMinute: 600,
-            tokensPerMinute:   1000000,
+            tokensPerMinute:   100000,
         },
         features: ["All Models", "Custom Rate Limits", "Dedicated Support", "SLA"]
     }

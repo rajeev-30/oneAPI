@@ -1,10 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useChat } from "../hooks/useChat";
+
+const CHAT_STORAGE_KEY = "oneapi-chat-history";
 
 export const Chat = () => {
     const [input,    setInput]    = useState("");
     const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
     const { response, loading, error, sendMessage } = useChat();
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+            if (!raw) return;
+
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+                setMessages(parsed);
+            }
+        } catch {
+            // Ignore invalid localStorage payloads
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+    }, [messages]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,7 +38,10 @@ export const Chat = () => {
         setMessages(newMessages);
         setInput("");
 
-        await sendMessage(newMessages);
+        const assistantReply = await sendMessage(newMessages);
+        if (assistantReply.trim()) {
+            setMessages([...newMessages, { role: "assistant", content: assistantReply }]);
+        }
     };
 
     return (
