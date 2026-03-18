@@ -1,8 +1,10 @@
 import { Schema, Document, model, Types } from "mongoose";
 
+
 export interface ISubscription extends Document {
     user:      Types.ObjectId;
     plan:      Types.ObjectId;
+    type:        "fixed" | "payg";
     status:    "active" | "cancelled" | "expired";
     startDate: Date;
     endDate:   Date;          // next billing date
@@ -23,6 +25,11 @@ const subscriptionSchema = new Schema<ISubscription>({
     plan: { 
         type: Schema.Types.ObjectId, 
         ref: "Plan", 
+        required: true 
+    },
+    type:  { 
+        type: String, 
+        enum: ["fixed", "payg"], 
         required: true 
     },
     status: { 

@@ -5,6 +5,9 @@ import billingRoute from "../modules/billing/billing.routes";
 import providerRoute from "../modules/provider/provider.routes";
 import modelRoute from "../modules/model/model.routes"
 import gatewayRoute from "../modules/gateway/gateway.routes";
+import planRoute from "../modules/plan/plan.routes";
+
+
 
 const app = express();
 
@@ -14,5 +17,6 @@ app.use("/billing", billingRoute);
 app.use("/provider", providerRoute);
 app.use("/model", modelRoute);
 app.use("/chat", gatewayRoute);
+app.use("/plan", planRoute);
 
 export default app;

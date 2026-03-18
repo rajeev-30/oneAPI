@@ -1,11 +1,9 @@
 import { Schema, Document, model } from "mongoose";
 
-type PlanType = "fixed" | "payg";
 
 interface IPlan extends Document {
     name:        string;   // "Free" | "Pro" | "Enterprise"
     price:       number;   // per month in INR
-    type:        PlanType;
     limits: {
         requestsPerDay: number;
         tokensPerDay:   number;
@@ -18,7 +16,7 @@ interface IPlan extends Document {
 const planSchema = new Schema<IPlan>({
     name:  { type: String, required: true, unique: true },
     price: { type: Number, required: true },
-    type:  { type: String, required: true },
+    
     limits: {
         requestsPerDay:  { type: Number, default: 20   },
         tokensPerDay:    { type: Number, default: 10000 },

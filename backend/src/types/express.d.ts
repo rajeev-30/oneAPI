@@ -4,10 +4,10 @@ import { ISubscription } from "@modules/subscription/subscription.model";
 
 declare module "express" {
     interface Request {
-        userId?:       string;  // ✅ module augmentation (more reliable than global)
+        userId?:       string;  // module augmentation (more reliable than global)
         apiKeyId?:     string;
         apiKey?:       string;
         tpmRedisKey?:  string;
-        subscription?: ISubscription; // ✅ add this
+        subscription?: ISubscription; // add this
     }
 }

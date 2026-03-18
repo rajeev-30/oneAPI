@@ -81,6 +81,12 @@ export const chatCompletion = async (req: Request, res: Response) => {
             });
         }
 
+        updateSubscriptionUsage(
+            req.userId as string,
+            usage.total_tokens,
+            usage.totalCost,
+        );
+        
         return updateUsage(
             req.userId as string,
             model._id,
@@ -89,7 +95,7 @@ export const chatCompletion = async (req: Request, res: Response) => {
         );
     } catch (error) {
         res.status(500).json({
-            message: "Error in chatCompletion gateway",
+            message: "Please try again later or use different model",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -151,4 +157,24 @@ const updateUsage = async (
             { upsert: true },
         );
     }
+};
+
+
+const updateSubscriptionUsage = async (
+    userId: string,
+    totalTokens: number,
+    cost: number,
+) => {
+    //update subscription usage
+    await Subscription.findOneAndUpdate(
+        { user: userId, status: "active" },
+        {
+            $inc: {
+                "usage.requestsUsed": 1,
+                "usage.tokensUsed": totalTokens,
+                "totalSpent": cost,
+                "balance": -cost,
+            }
+        },
+    );
 };
