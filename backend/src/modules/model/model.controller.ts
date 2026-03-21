@@ -1,23 +1,42 @@
 import { Request, Response } from "express";
-import { createModelInput } from "./model.validation";
+import { modelSchema } from "./model.validation";
 import  Model  from "./model.model";
+import Provider from "@modules/provider/provider.model";
+import Billing from "@modules/billing/billing.model";
+import { Types } from "mongoose";
 
 
 export const createModel = async (req: Request, res: Response) => {
     try{
-        const result = createModelInput.safeParse(req.body);
+        const result = modelSchema.safeParse(req.body);
         if(!result.success){
             return res.status(400).json({
                 message: result.error.issues[0].message,
                 success: false,
             });
         }
-        const { slug } = result.data;
+        const { slug, billing, provider } = result.data;
         const existingModel = await Model.findOne({ slug });
 
         if(existingModel){
             return res.status(400).json({
                 message: "Model with this slug already exists",
+                success: false
+            });
+        }
+
+        const existingProvider = await Provider.findOne({ _id: provider});
+        if (!existingProvider) {
+            return res.status(400).json({
+                message: "Invalid provider",
+                success: false
+            });
+        }
+
+        const existingBilling = await Billing.findOne({ _id: billing });
+        if (!existingBilling) {
+            return res.status(400).json({
+                message: "Invalid billing",
                 success: false
             });
         }
@@ -41,7 +60,7 @@ export const createModel = async (req: Request, res: Response) => {
 
 export const getModels = async(req:Request, res:Response) => {
     try{
-        const models = await Model.find();
+        const models = await Model.find().populate("provider").populate("billing");
         if(!models || models.length === 0) {
             return res.status(404).json({
                 message: "Models not found",
