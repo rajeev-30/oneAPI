@@ -1,6 +1,5 @@
 import ApiKey from "@modules/apiKey/apiKey.model";
 import {Request, Response, NextFunction} from "express"
-import { ca } from "zod/v4/locales";
 
 export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunction) => {
     try{

@@ -23,20 +23,21 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
             tokensPerDay: plan?.limits?.tokensPerDay ?? 100000,
         };
 
-        const estimatedTokens = Math.ceil(
-            (Array.isArray(req.body?.messages)
-                ? req.body.messages.reduce((n: number, m: any) => 
-                    n + String(m?.content || "").length, 0)
-                : 0) / 4 * 1.1
-        );
+        // const estimatedTokens = Math.ceil(
+        //     (Array.isArray(req.body?.messages)
+        //         ? req.body.messages.reduce((n: number, m: any) => 
+        //             n + String(m?.content || "").length, 0)
+        //         : 0) / 4 * 1.1
+        // );
+
+        //User should have at least 100 tokens left to make a request, otherwise they will hit the rate limit. This is a simple way to prevent abuse while we don't have actual token counting implemented.
+        const estimatedTokens = 100
 
         const result = await checkPlanLimits({
             userId: req.userId as string,
             estimatedTokens,
             limits,
         });
-
-        console.log(result);
 
         if (!result.allowed) {
             const wallet = (req.subscription as any)?.wallet;

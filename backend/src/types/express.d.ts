@@ -1,14 +1,12 @@
 import "express";
-import { IApiKey }       from "@modules/apiKey/apiKey.model";
 import { ISubscription } from "@modules/subscription/subscription.model";
+import { Types } from "mongoose";
 
 declare module "express" {
     interface Request {
-        userId?:       string;  // module augmentation (more reliable than global)
-        apiKeyId?:     string;
+        userId?:       string;  
         apiKey?:       string;
-        tpmRedisKey?:  string;
-        subscription?: ISubscription; // add this
-        billingSource?: "plan" | "wallet"; // add this
+        subscription?: ISubscription; 
+        billingSource?: "plan" | "wallet"; 
     }
 }

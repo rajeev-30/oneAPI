@@ -7,7 +7,6 @@ import { costCalculator } from "@utils/costCalculator";
 export async function* anthropicChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
 
     const apiKey = process.env.CLAUDE_API_KEY;
-    console.log("Using CLAUDE_API_KEY:", apiKey);
     if (!apiKey) throw new Error("CLAUDE_API_KEY is not set in .env");
 
     const client = new Anthropic({ apiKey });

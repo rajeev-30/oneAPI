@@ -31,7 +31,7 @@ export const SignUp = async (req: Request, res: Response) => {
         const hashedPass = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPass });
         await newUser.save();
-        const token = generateAuthToken(newUser._id);
+        const token = generateAuthToken(newUser._id.toString());
 
 
         res.status(201)
@@ -78,7 +78,7 @@ export const Login = async (req: Request, res: Response)=> {
         }
 
         // Generate JWT token
-        const token = generateAuthToken(user._id);
+        const token = generateAuthToken(user._id.toString());
 
         res.status(200)
         .cookie('token', token, {

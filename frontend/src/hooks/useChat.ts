@@ -13,7 +13,7 @@ export const useChat = () => {
         let finalText = "";
 
         try {
-            const res = await fetch("http://localhost:8000/v1/chat/completions", {
+            const res = await fetch("http://localhost:8000/api/v1/chat/completions", {
                 method: "POST",
                 headers: {
                     "Content-Type":  "application/json",

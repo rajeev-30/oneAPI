@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Types } from "mongoose"; 
 
 interface DecodedTokenPayload extends JwtPayload {
-    userId: Types.ObjectId;
+    userId: string;
 }
 
 export const authMiddleware = async(req: Request, res: Response, next: NextFunction) =>{
@@ -18,7 +18,7 @@ export const authMiddleware = async(req: Request, res: Response, next: NextFunct
 
     try{
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as DecodedTokenPayload;
-        (req as any).userId = decoded.userId;
+        req.userId = decoded.userId;
         next();
     }catch(error){
         return res.status(401).json({
