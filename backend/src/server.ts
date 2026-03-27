@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import app from "./app";
 import connectDB from "./config/database";
-import { Response } from "express";
-// import connectRedis from "./config/redis";
+import { initRedis, closeRedis } from "./config/redis";
 
 dotenv.config();
 
@@ -12,21 +11,15 @@ const PORT = process.env.PORT || 8000;
 
 async function startServer() {
   try {
-    // MongoDB
-    await connectDB();
-
-    // Redis
-    // await connectRedis();
-
     const server = http.createServer(app);
 
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
 
-    app.get("/", (_, res: Response) => {
-      res.send("Hello World!");
-    });
+    // Connect MongoDB, Redis
+    await connectDB();
+    await initRedis();
 
     // Graceful shutdown
     process.on("SIGTERM", shutdown);
@@ -34,10 +27,12 @@ async function startServer() {
 
     async function shutdown() {
       console.log("Shutting down...");
-      await mongoose.connection.close();
-      server.close(() => {
-        process.exit(0);
-      });
+      try {
+        await closeRedis();
+        await mongoose.connection.close();
+      } finally {
+        server.close(() => process.exit(0));
+      }
     }
   } catch (error) {
     console.error("Server startup failed:", error);

@@ -25,7 +25,7 @@ export const createModel = async (req: Request, res: Response) => {
             });
         }
 
-        const existingProvider = await Provider.findOne({ _id: provider});
+        const existingProvider = await Provider.findById(provider);
         if (!existingProvider) {
             return res.status(400).json({
                 message: "Invalid provider",
@@ -33,7 +33,7 @@ export const createModel = async (req: Request, res: Response) => {
             });
         }
 
-        const existingBilling = await Billing.findOne({ _id: billing });
+        const existingBilling = await Billing.findById(billing);
         if (!existingBilling) {
             return res.status(400).json({
                 message: "Invalid billing",

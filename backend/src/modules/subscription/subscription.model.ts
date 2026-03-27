@@ -4,16 +4,10 @@ import { Schema, Document, model, Types } from "mongoose";
 export interface ISubscription extends Document {
     user:      Types.ObjectId;
     plan:      Types.ObjectId;
-    type:        "fixed" | "payg";
-    status:    "active" | "cancelled" | "expired";
+    wallet:    Types.ObjectId;
+    status:    "active" | "expired";
     startDate: Date;
     endDate:   Date;          // next billing date
-    usage: {
-        requestsUsed: number;
-        tokensUsed:   number;
-    };
-    balance: number;
-    totalSpent: number;
 }
 
 const subscriptionSchema = new Schema<ISubscription>({
@@ -25,26 +19,21 @@ const subscriptionSchema = new Schema<ISubscription>({
     plan: { 
         type: Schema.Types.ObjectId, 
         ref: "Plan", 
-        required: true 
+        default: null
     },
-    type:  { 
-        type: String, 
-        enum: ["fixed", "payg"], 
-        required: true 
+    wallet: { 
+        type: Schema.Types.ObjectId, 
+        ref: "Wallet" ,
+        default: null
     },
+    
     status: { 
         type: String, 
-        enum: ["active", "cancelled", "expired"],
+        enum: ["active", "expired"],
         default: "active"
     },
-    startDate: { type: Date, default: Date.now },
-    endDate:   { type: Date, required: true },   // 30 days from start
-    usage: {
-        requestsUsed: { type: Number, default: 0 },
-        tokensUsed:   { type: Number, default: 0 }
-    },
-    balance: { type: Number, default: 0 },      // For payg: current credit
-    totalSpent: { type: Number, default: 0 }   // For payg: total spent so far
+    startDate: { type: Date, default: null },
+    endDate:   { type: Date, default: null },   // 30 days from start
 }, { timestamps: true });
 
 export default model<ISubscription>("Subscription", subscriptionSchema);

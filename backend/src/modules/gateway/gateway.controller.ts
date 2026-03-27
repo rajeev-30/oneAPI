@@ -1,10 +1,12 @@
 import { chatCompletionSchema } from "./gateway.validation";
 import { Request, Response } from "express";
 import Model from "@modules/model/model.model";
-import Subscription from "@modules/subscription/subscription.model";
 import Usage from "@modules/usage/usage.model";
 import { Types } from "mongoose";
 import { routeToProvider } from "@services/providerRouter.service";
+import Wallet from "@modules/wallet/wallet.model";
+import { recordActualUsage } from "@services/redisRateLimiter.service";
+
 
 export const chatCompletion = async (req: Request, res: Response) => {
     try {
@@ -81,18 +83,31 @@ export const chatCompletion = async (req: Request, res: Response) => {
             });
         }
 
-        updateSubscriptionUsage(
+        const totalTokens = Number(usage?.total_tokens ?? 0);
+        const totalCost = Number(usage?.totalCost ?? 0);
+
+
+        if (req.billingSource === "plan") {
+            await recordActualUsage({
+                userId: req.userId as string,
+                actualTokens: totalTokens,
+            });
+        }
+
+        await settleBilling(
             req.userId as string,
-            usage.total_tokens,
-            usage.totalCost,
+            req.billingSource as "plan" | "wallet" | undefined,
+            totalCost
         );
         
-        return updateUsage(
+        await updateUsage(
             req.userId as string,
             model._id,
-            usage.total_tokens,
-            usage.totalCost,
+            totalTokens,
+            totalCost,
         );
+
+        return;
     } catch (error) {
         res.status(500).json({
             message: "Please try again later or use different model",
@@ -110,17 +125,6 @@ const updateUsage = async (
     cost: number,
 ) => {
     const month = new Date().toISOString().slice(0, 7); // "2026-03"
-
-    //  update subscription usage
-    await Subscription.findOneAndUpdate(
-        { user: userId, status: "active" },
-        {
-            $inc: {
-                "usage.requestsUsed": 1,
-                "usage.tokensUsed": totalTokens,
-            },
-        },
-    );
 
     // Step 1: Try updating existing model
     const result = await Usage.updateOne(
@@ -160,21 +164,31 @@ const updateUsage = async (
 };
 
 
-const updateSubscriptionUsage = async (
+
+const settleBilling = async (
     userId: string,
-    totalTokens: number,
-    cost: number,
+    billingSource: "plan" | "wallet" | undefined,
+    cost: number
 ) => {
-    //update subscription usage
-    await Subscription.findOneAndUpdate(
-        { user: userId, status: "active" },
-        {
-            $inc: {
-                "usage.requestsUsed": 1,
-                "usage.tokensUsed": totalTokens,
-                "totalSpent": cost,
-                "balance": -cost,
-            }
-        },
-    );
+    if (billingSource === "wallet") {
+        
+        await Wallet.findOneAndUpdate(
+            { user: userId },
+            [
+                {
+                    $set: {
+                        balance: {
+                            $cond: [
+                                { $gte: ["$balance", cost] },
+                                { $subtract: ["$balance", cost] },
+                                0
+                            ]
+                        },
+                        totalSpent: { $add: ["$totalSpent", cost] }
+                    }
+                }
+            ],
+            { updatePipeline: true }
+        );
+    }
 };

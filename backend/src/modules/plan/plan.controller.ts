@@ -1,7 +1,6 @@
 import { planSchema } from "./plan.validation"
 import Plan from "./plan.model";
 import { Request, Response } from "express";
-import { _array } from "zod/v4/core";
 
 
 export const createPlan = async (req: Request, res: Response) => {
@@ -14,7 +13,7 @@ export const createPlan = async (req: Request, res: Response) => {
             });
         }
 
-        const { name, price, type, limits, features } = result.data;
+        const { name, price, limits, features } = result.data;
 
         const existingPlan = await Plan.findOne({ price });
         if (existingPlan) {
@@ -27,7 +26,6 @@ export const createPlan = async (req: Request, res: Response) => {
         const plan  = new Plan({
             name,
             price,
-            type,
             limits,
             features
         });

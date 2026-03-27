@@ -4,6 +4,7 @@ import { IModel } from "@modules/model/model.model"
 import { anthropicChat } from "@services/anthropic.service";
 import { googleChat } from "@services/google.service";
 import { groqChat } from "@services/groq.service";
+import { openaiChat } from "./openai.service";
 
 
 interface RouteOptions {
@@ -33,6 +34,9 @@ export async function* routeToProvider(options: RouteOptions): AsyncGenerator<Ch
             break;
         case "nvidia":            
             yield* nvidiaChat(options);
+            break;
+        case "openai":            
+            yield* openaiChat(options);
             break;
         default:
             throw new Error(`'${providerSlug}' is not supported yet`);

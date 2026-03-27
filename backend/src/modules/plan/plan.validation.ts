@@ -10,7 +10,6 @@ const limitValidation = z.object({
 export const planSchema = z.object({
     name: z.string("Name is required").min(2).max(100),
     price: z.number("Price is required").min(0),
-    type: z.enum(["fixed", "payg"], "Type is required"),
     limits: limitValidation,
     features: z.array(z.string()).min(1).optional()
 })

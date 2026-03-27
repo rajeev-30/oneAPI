@@ -9,5 +9,6 @@ declare module "express" {
         apiKey?:       string;
         tpmRedisKey?:  string;
         subscription?: ISubscription; // add this
+        billingSource?: "plan" | "wallet"; // add this
     }
 }

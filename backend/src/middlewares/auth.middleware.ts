@@ -33,8 +33,9 @@ export const authMiddleware = async(req: Request, res: Response, next: NextFunct
 
 export const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const userId = req.userId;
+    const adminUserId = process.env.ADMIN_USER_ID as string || "";
 
-    if (userId === process.env.ADMIN_USER_ID) {
+    if (userId === adminUserId) {
         next();
     } else {
         return res.status(403).json({

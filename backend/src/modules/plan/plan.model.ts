@@ -1,29 +1,39 @@
 import { Schema, Document, model } from "mongoose";
+import { required } from "zod/v4/core/util.cjs";
 
-
-interface IPlan extends Document {
-    name:        string;   // "Free" | "Pro" | "Enterprise"
-    price:       number;   // per month in INR
+export interface IPlan extends Document {
+    name: string;
+    price: number;
     limits: {
         requestsPerDay: number;
-        tokensPerDay:   number;
+        tokensPerDay: number;
         requestsPerMinute: number;
-        tokensPerMinute:   number;
+        tokensPerMinute: number;
     };
-    features: string[];    // ["Stream", "All Models", "Priority Support"]
+    features: string[];
 }
 
-const planSchema = new Schema<IPlan>({
-    name:  { type: String, required: true, unique: true },
-    price: { type: Number, required: true },
-    
-    limits: {
-        requestsPerDay:  { type: Number, default: 20   },
-        tokensPerDay:    { type: Number, default: 10000 },
-        requestsPerMinute: { type: Number, default: 5    },
-        tokensPerMinute:   { type: Number, default: 1000  },
+const planSchema = new Schema<IPlan>(
+    {
+        name: { 
+            type: String, 
+            required: true, 
+            unique: true 
+        },
+        price: { 
+            type: Number, 
+            required: true, 
+            min: 0 
+        },
+        limits: {
+            requestsPerDay: { type: Number, required: true },
+            tokensPerDay: { type: Number, required: true },
+            requestsPerMinute: { type: Number, required: true },
+            tokensPerMinute: { type: Number, required: true },
+        },
+        features: [String],
     },
-    features: [String]
-}, { timestamps: true });
+    { timestamps: true }
+);
 
 export default model<IPlan>("Plan", planSchema);
