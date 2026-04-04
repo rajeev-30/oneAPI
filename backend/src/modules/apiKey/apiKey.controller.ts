@@ -99,7 +99,7 @@ export const updateApiKeyName = async(req:Request, res:Response) => {
             });
         }
 
-        const apiKey = await ApiKey.findOneAndUpdate({ _id: id, user: userId }, result.data, { new: true });
+        const apiKey = await ApiKey.findOneAndUpdate({ _id: id, user: userId }, { $set: result.data }, { returnDocument: "after" });
         if(!apiKey){
             return sendResponse(res, 404, {
                 message: "API key not found",

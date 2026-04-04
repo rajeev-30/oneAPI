@@ -156,7 +156,7 @@ export const updateModel = async (req: Request, res: Response) => {
             });
         }
 
-        const model = await Model.findByIdAndUpdate(id, result.data, { returnDocument: "after" })
+        const model = await Model.findByIdAndUpdate(id, { $set: result.data }, { returnDocument: "after" })
             .populate("provider")
             .populate("billing");
 

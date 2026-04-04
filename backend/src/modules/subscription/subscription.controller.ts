@@ -29,10 +29,12 @@ export const createSubscription = async (req: Request, res: Response) => {
         const subscription = await Subscription.findOneAndUpdate(
             { user: userId },
             {
-                plan,
-                startDate,
-                endDate,
-                status: "active",
+                $set: {
+                    plan,
+                    startDate,
+                    endDate,
+                    status: "active",
+                }
             },
             { upsert: true, setDefaultsOnInsert: true, returnDocument: "after" }
         );
@@ -83,8 +85,8 @@ export const cancelSubscription = async (req: Request, res: Response) => {
         const userId = req.userId;
         const subscription = await Subscription.findOneAndUpdate(
             { user: userId, status: "active" },
-            { status: "expired" },
-            { new: true }
+            { $set: { status: "expired" } },
+            {  returnDocument: "after" }
         );
 
         if (!subscription) {

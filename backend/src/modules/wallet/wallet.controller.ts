@@ -28,7 +28,7 @@ export const addBalance = async (req: Request, res: Response) => {
 
         await Subscription.findOneAndUpdate(
             { user: userId },
-            { wallet: wallet._id, status: "active" },
+            { $set: { wallet: wallet._id, status: "active" } },
             { upsert: true, setDefaultsOnInsert: true }
         );
 
