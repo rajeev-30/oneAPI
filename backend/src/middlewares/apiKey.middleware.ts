@@ -1,18 +1,20 @@
 import ApiKey from "@modules/apiKey/apiKey.model";
+import { sendResponse } from "@utils/response";
 import {Request, Response, NextFunction} from "express"
+import { send } from "node:process";
 
 export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunction) => {
     try{
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({
+            return sendResponse(res, 401, {
                 message: "API key missing.",
                 success: false
             });
         }
         const key = authHeader.split(" ")[1];
         if (!key.startsWith("sk-oneapi-")) {
-            return res.status(401).json({
+            return sendResponse(res, 401, {
                 message: "Invalid API key format",
                 success: false
             });
@@ -26,7 +28,7 @@ export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunct
         });
 
         if (!apiKey) {
-            return res.status(401).json({
+            return sendResponse(res, 401, {
                 message: "Invalid or revoked API key",
                 success: false
             });
@@ -37,7 +39,7 @@ export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunct
 
         next();
     }catch(error){
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "API key validation failed",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Subscription from "@modules/subscription/subscription.model";
+import { sendResponse } from "@utils/response";
 
 type BillingSource = "plan" | "wallet";
 
@@ -11,7 +12,7 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
         }).populate("plan").populate("wallet");
 
         if (!subscription) {
-            return res.status(403).json({
+            return sendResponse(res, 403, {
                 message: "Your credit balance is too low to access the oneAPI. Upgrade your plan or purchase credits.",
                 success: false,
             });
@@ -26,7 +27,7 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
 
         if (!hasActivePlan && !hasWalletBalance) {
             await Subscription.findByIdAndUpdate(subscription._id, { $set: { status: "expired" } });
-            return res.status(403).json({
+            return sendResponse(res, 403, {
                 message: "Your credit balance is too low to access the oneAPI. Upgrade your plan or purchase credits.",
                 success: false,
             });
@@ -38,7 +39,7 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
         req.billingSource = billingSource;
         next();
     } catch (error) {
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Subscription check failed",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

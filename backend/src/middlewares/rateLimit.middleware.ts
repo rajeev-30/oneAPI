@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { checkPlanLimits } from "@services/redisRateLimiter.service";
+import { sendResponse } from "@utils/response";
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const subscription = req.subscription as any;
         if (!subscription) {
-            return res.status(500).json({
+            return sendResponse(res, 500, {
                 message: "Subscription context missing.",
                 success: false,
             });
@@ -46,15 +47,15 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
                 return next();
             }
 
-            return res.status(429).json({ 
-                success: false, 
-                message: result.reason + " Please upgrade your plan or purchase credits to continue." 
+            return sendResponse(res, 429, {
+                success: false,
+                message: result.reason + " Please upgrade your plan or purchase credits to continue."
             });
         }
 
         return next();
     } catch (error) {
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Rate limit check failed",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

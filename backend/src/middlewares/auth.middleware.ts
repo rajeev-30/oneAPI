@@ -1,3 +1,4 @@
+import { sendResponse } from "@utils/response";
 import {Request, Response, NextFunction} from "express"
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -37,7 +38,7 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
     if (userId === adminUserId) {
         next();
     } else {
-        return res.status(403).json({
+        return sendResponse(res, 403, {
             message: "Forbidden: Admin access required",
             success: false,
         });
