@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { billingSchema, updateBillingSchema } from "./billing.validation";
+import { billingSchema } from "./billing.validation";
 import Billing from "./billing.model";
 import { sendResponse } from "@utils/response";
 
@@ -110,7 +110,7 @@ export const deleteBilling = async (req: Request, res: Response) => {
 export const updateBilling = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const result = updateBillingSchema.safeParse(req.body);
+        const result = billingSchema.partial().safeParse(req.body);
         if (!result.success) {
             return sendResponse(res, 400, {
                 message: result.error.issues[0].message,

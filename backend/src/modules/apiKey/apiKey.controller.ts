@@ -62,6 +62,65 @@ export const getApiKeys = async(req:Request, res:Response) => {
     }
 }
 
+export const getApiKey = async(req:Request, res:Response) => {
+    try{
+        const { id } = req.params;
+        const userId = req.userId;
+        const apiKey = await ApiKey.findOne({ _id: id, user: userId });
+        if(!apiKey){
+            return sendResponse(res, 404, {
+                message: "API key not found",
+                success: false
+            });
+        }
+        return sendResponse(res, 200, {
+            message: "API key found successfully",
+            success: true,
+            data: apiKey
+        });
+    }catch(error){
+        return sendResponse(res, 500, {
+            message: "Error retrieving API key",
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error"
+        });
+    }
+}
+
+export const updateApiKeyName = async(req:Request, res:Response) => {
+    try{
+        const { id } = req.params;
+        const userId = req.userId;
+        const result = apiKeySchema.safeParse(req.body);
+        if(!result.success){
+            return sendResponse(res, 400, {
+                message: result.error.issues[0].message,
+                success: false
+            });
+        }
+
+        const apiKey = await ApiKey.findOneAndUpdate({ _id: id, user: userId }, result.data, { new: true });
+        if(!apiKey){
+            return sendResponse(res, 404, {
+                message: "API key not found",
+                success: false
+            });
+        }
+
+        return sendResponse(res, 200, {
+            message: "API key updated successfully",
+            success: true,
+            data: apiKey
+        });
+    }catch(error){
+        return sendResponse(res, 500, {
+            message: "Error updating API key",
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error"
+        });
+    }
+}
+
 
 export const deleteApiKey = async (req: Request, res: Response) => {
     try {
@@ -89,3 +148,5 @@ export const deleteApiKey = async (req: Request, res: Response) => {
         });
     }
 };
+
+

@@ -13,18 +13,5 @@ export const billingSchema = z.object({
     }),
 });
 
-export const updateBillingSchema = z.object({
-    name: z.string().optional(),
-    inputCostPer1KTokens: z
-        .number({ message: "Input cost must be a number" })
-        .positive("Input cost must be a positive number")
-        .optional(),
-    outputCostPer1KTokens: z
-        .number({ message: "Output cost must be a number" })
-        .positive("Output cost must be a positive number")
-        .optional(),
-    currency: z.enum(["INR", "USD"], {
-        message: "Currency must be either INR or USD",
-    }).optional(),
-});
+
 
