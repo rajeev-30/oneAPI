@@ -36,7 +36,7 @@ export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunct
 
         // Update lastUsedAt (non-blocking)
         ApiKey.findByIdAndUpdate(apiKey._id, { 
-            lastUsedAt: new Date() 
+            $set: { lastUsedAt: new Date() } 
         }).catch((error) => {
             console.log("Failed to update API key lastUsedAt:", error instanceof Error ? error.message : error);
         });

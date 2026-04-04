@@ -25,7 +25,7 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
         const hasWalletBalance = !!wallet && wallet.balance > 0;
 
         if (!hasActivePlan && !hasWalletBalance) {
-            await Subscription.findByIdAndUpdate(subscription._id, { status: "expired" });
+            await Subscription.findByIdAndUpdate(subscription._id, { $set: { status: "expired" } });
             return res.status(403).json({
                 message: "Your credit balance is too low to access the oneAPI. Upgrade your plan or purchase credits.",
                 success: false,
