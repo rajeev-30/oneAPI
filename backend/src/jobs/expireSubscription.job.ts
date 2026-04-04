@@ -62,6 +62,6 @@ export const startSubscriptionExpiryCron = () => {
                 console.error("Subscription expiry cron failed:", error);
             }
         },
-        { timezone: "UTC" } // Change to your timezone if needed, e.g., "Asia/Kolkata"
+        { timezone: "UTC" } // Change timezone if needed, e.g., "Asia/Kolkata"
     );
 };

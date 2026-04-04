@@ -1,14 +1,14 @@
 import {Request, Response} from "express"
 import crypto from "crypto";
 import ApiKey from "./apiKey.model";
-import { nameValidation } from "@modules/apiKey/apiKey.validation";
+import { apiKeySchema } from "@modules/apiKey/apiKey.validation";
 import { sendResponse } from "@utils/response";
 
 
 export const generateApiKey = async(req: Request, res:Response) =>{
     try{
         const key = "sk-oneapi-" + crypto.randomBytes(24).toString("hex");
-        const result = nameValidation.safeParse(req.body);
+        const result = apiKeySchema.safeParse(req.body);
         if(!result.success){
             return sendResponse(res, 400, {
                 message: result.error.issues[0].message,

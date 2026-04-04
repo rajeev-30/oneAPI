@@ -1,14 +1,14 @@
 import { sendResponse } from "@utils/response";
 import User from "./user.model";
 import { comparePassword, generateAuthToken } from "./user.service";
-import { signupInput, loginInput } from "./user.validation";
+import { signupSchema, loginSchema } from "./user.validation";
 import bcrypt from "bcryptjs"
 import {Request, Response} from "express"
 
 
 export const SignUp = async (req: Request, res: Response) => {
     try{
-        const result = signupInput.safeParse(req.body);
+        const result = signupSchema.safeParse(req.body);
         
         if(!result.success){
             return sendResponse(res, 400, {
@@ -60,7 +60,7 @@ export const SignUp = async (req: Request, res: Response) => {
 
 export const Login = async (req: Request, res: Response)=> {
     try{
-        const result = loginInput.safeParse(req.body);
+        const result = loginSchema.safeParse(req.body);
         if(!result.success){
             return sendResponse(res, 400, {
                 message: result.error.issues[0].message,

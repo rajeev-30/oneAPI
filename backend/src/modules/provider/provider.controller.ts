@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { ProviderInput } from "./provider.validation";
+import { providerSchema } from "./provider.validation";
 import Provider from "./provider.model";
 import { sendResponse } from "@utils/response";
 
 
 export const createProvider = async (req: Request, res: Response) => {
     try {
-        const result = ProviderInput.safeParse(req.body);
+        const result = providerSchema.safeParse(req.body);
         if (!result.success) {
             return sendResponse(res, 400, {
                 message:  result.error.issues[0].message,

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { createBillingInput } from "./billing.validation";
+import { billingSchema } from "./billing.validation";
 import Billing from "./billing.model";
 import { sendResponse } from "@utils/response";
 
 export const createBilling = async (req: Request, res: Response) => {
     try {
-        const result = createBillingInput.safeParse(req.body);
+        const result = billingSchema.safeParse(req.body);
         if (!result.success) {
             return sendResponse(res, 400, {
                 message: result.error.issues[0].message,

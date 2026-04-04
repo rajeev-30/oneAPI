@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createBillingInput = z.object({
+export const billingSchema = z.object({
     inputCostPer1KTokens: z
         .number({ message: "Input cost must be a number" })
         .positive("Input cost must be a positive number"),
