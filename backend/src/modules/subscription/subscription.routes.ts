@@ -4,7 +4,7 @@ import { authMiddleware } from "@middlewares/auth.middleware";
 
 const router = Router();
 
-router.route("/").post(authMiddleware, createSubscription);
+router.route("/:plan").post(authMiddleware, createSubscription);
 router.route("/").get(authMiddleware, getSubscription);
 
 export default router;

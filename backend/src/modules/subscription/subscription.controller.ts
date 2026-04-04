@@ -7,7 +7,7 @@ import Plan from "@modules/plan/plan.model";
 
 export const createSubscription = async (req: Request, res: Response) => {
     try {
-        const result = subscriptionSchema.safeParse(req.body);
+        const result = subscriptionSchema.safeParse(req.params);
         if (!result.success) {
             return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
@@ -26,22 +26,16 @@ export const createSubscription = async (req: Request, res: Response) => {
             });
         }
 
-        let subscription = await Subscription.findOne({ user: userId });
-        if (!subscription) {
-            subscription = new Subscription({
-                user: userId,
-                plan: existingPlan._id,
+        const subscription = await Subscription.findOneAndUpdate(
+            { user: userId },
+            {
+                plan,
                 startDate,
                 endDate,
-                status: "active"
-            });
-        } else {
-            subscription.plan = existingPlan._id;
-            subscription.startDate = startDate;
-            subscription.endDate = endDate;
-            subscription.status = "active";
-        }
-        await subscription.save();
+                status: "active",
+            },
+            { upsert: true, setDefaultsOnInsert: true, returnDocument: "after" }
+        );
 
         return sendResponse(res, 201, {
             message: "Subscription created/updated successfully",
