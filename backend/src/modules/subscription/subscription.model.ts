@@ -3,11 +3,11 @@ import { Schema, Document, model, Types } from "mongoose";
 
 export interface ISubscription extends Document {
     user:      Types.ObjectId;
-    plan:      Types.ObjectId;
-    wallet:    Types.ObjectId;
+    plan:      Types.ObjectId | null;
+    wallet:    Types.ObjectId | null;
     status:    "active" | "expired";
-    startDate: Date;
-    endDate:   Date;          // next billing date
+    startDate: Date | null;
+    endDate:   Date | null;
 }
 
 const subscriptionSchema = new Schema<ISubscription>({
@@ -26,7 +26,6 @@ const subscriptionSchema = new Schema<ISubscription>({
         ref: "Wallet" ,
         default: null
     },
-    
     status: { 
         type: String, 
         enum: ["active", "expired"],

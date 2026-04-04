@@ -21,21 +21,16 @@ export const addBalance = async (req: Request, res: Response) => {
         let wallet = await Wallet.findOne({ user: userId });
         if (!wallet) {
             wallet = new Wallet({ user: userId, balance});
-            //add wallet to subscription (if done not exists create one)
-            await Subscription.findOneAndUpdate(
-                { user: userId },
-                { wallet: wallet._id },
-                { upsert: true, setDefaultsOnInsert: true }
-            );
         } else {
             wallet.balance += balance;
-            //update subscription status to active if balance is added
-            await Subscription.findOneAndUpdate(
-                { user: userId, status: "expired" },
-                { status: "active" }
-            );
         }
         await wallet.save();
+
+        await Subscription.findOneAndUpdate(
+            { user: userId },
+            { wallet: wallet._id, status: "active" },
+            { upsert: true, setDefaultsOnInsert: true }
+        );
 
         return sendResponse(res, 200, {
             message: "Balance added successfully",

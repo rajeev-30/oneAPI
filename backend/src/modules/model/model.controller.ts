@@ -71,7 +71,7 @@ export const getModels = async (req: Request, res: Response) => {
         const cached = await redis.get(cacheKey);
         if (cached) {
             return sendResponse(res, 200, {
-                message: "Models fetched successfully (from cache)",
+                message: "Models fetched successfully",
                 success: true,
                 data: JSON.parse(cached),
             });

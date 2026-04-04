@@ -1,6 +1,5 @@
 import {Request, Response, NextFunction} from "express"
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Types } from "mongoose"; 
 
 interface DecodedTokenPayload extends JwtPayload {
     userId: string;

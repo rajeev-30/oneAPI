@@ -1,8 +1,11 @@
 import {z} from "zod";
 
-const subscriptionSchema = z.object({
-    plan: z.string(),
-    startDate: z.coerce.date(),
-    endDate: z.coerce.date(),
-    status: z.enum(["active", "expired", "cancelled"]),
+export const subscriptionSchema = z.object({
+    plan: z.string("Plan ID is required"),
+    startDate: z.coerce.date().default(() => new Date()),
+    endDate: z.coerce.date().default(() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 30);
+        return date;
+    }),
 });
