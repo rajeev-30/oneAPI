@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import app from "./app";
 import connectDB from "./config/database";
 import { initRedis, closeRedis } from "./config/redis";
+import { startSubscriptionExpiryCron } from "./jobs/expireSubscription.job";
 
 dotenv.config();
 
@@ -14,6 +15,9 @@ async function startServer() {
     // Connect MongoDB, Redis
     await connectDB();
     await initRedis();
+
+    // Cron job to expire subscriptions daily at midnight
+    startSubscriptionExpiryCron();
 
     const server = http.createServer(app);
 
