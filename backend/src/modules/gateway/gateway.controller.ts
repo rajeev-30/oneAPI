@@ -1,13 +1,10 @@
 import { chatCompletionSchema } from "./gateway.validation";
 import { Request, Response } from "express";
 import Model from "@modules/model/model.model";
-import Usage from "@modules/usage/usage.model";
-import { Types } from "mongoose";
 import { routeToProvider } from "@services/providerRouter.service";
-import Wallet from "@modules/wallet/wallet.model";
 import { recordActualUsage } from "@services/redisRateLimiter.service";
 import { sendResponse } from "@utils/response";
-
+import {settleBilling, updateUsage, updateApiKeyUsage} from "./gateway.service"
 
 export const chatCompletion = async (req: Request, res: Response) => {
     try {
@@ -113,6 +110,14 @@ export const chatCompletion = async (req: Request, res: Response) => {
             totalCost,
         );
 
+        updateApiKeyUsage(
+            req.apiKeyId as string,
+            req.apiKey as string,
+            req.userId as string,
+            totalTokens,
+            totalCost
+        );
+
     } catch (error) {
         return sendResponse(res, 500, {
             message: "Please try again later or use different model",
@@ -122,77 +127,4 @@ export const chatCompletion = async (req: Request, res: Response) => {
     }
 };
 
-// call this after getting response from provider
-const updateUsage = async (
-    userId: string,
-    modelId: Types.ObjectId,
-    totalTokens: number,
-    cost: number,
-) => {
-    const month = new Date().toISOString().slice(0, 7); // "2026-03"
 
-    // Step 1: Try updating existing model
-    const result = await Usage.updateOne(
-        { user: userId, month, "modelBreakdown.model": modelId },
-        {
-            $inc: {
-                totalRequests: 1,
-                totalTokens: totalTokens,
-                totalCost: cost,
-                "modelBreakdown.$.tokens": totalTokens,
-                "modelBreakdown.$.cost": cost,
-            },
-        },
-    );
-
-    // Step 2: If model not found → push new entry
-    if (result.matchedCount === 0) {
-        await Usage.updateOne(
-            { user: userId, month },
-            {
-                $inc: {
-                    totalRequests: 1,
-                    totalTokens,
-                    totalCost: cost,
-                },
-                $push: {
-                    modelBreakdown: {
-                        model: modelId,
-                        tokens: totalTokens,
-                        cost,
-                    },
-                },
-            },
-            { upsert: true },
-        );
-    }
-};
-
-
-// call this to settle billing after getting response from provider
-const settleBilling = async (
-    userId: string,
-    billingSource: "plan" | "wallet" | undefined,
-    cost: number
-) => {
-    if (billingSource === "wallet") { 
-        await Wallet.findOneAndUpdate(
-            { user: userId },
-            [
-                {
-                    $set: {
-                        balance: {
-                            $cond: [
-                                { $gte: ["$balance", cost] },
-                                { $subtract: ["$balance", cost] },
-                                0
-                            ]
-                        },
-                        totalSpent: { $add: ["$totalSpent", cost] }
-                    }
-                }
-            ],
-            { updatePipeline: true }
-        );
-    }
-};

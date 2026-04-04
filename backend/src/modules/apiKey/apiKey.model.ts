@@ -6,6 +6,7 @@ export interface IApiKey extends Document {
   user: Types.ObjectId;
   key: string;
   totalSpent: number;
+  totalRequests: number,
   rateLimit: {
     requestsPerMinute: number;
     tokensPerMinute: number;
@@ -38,6 +39,10 @@ const apiKeySchema = new Schema<IApiKey>({
     default:0
   },
   totalSpent: { 
+    type: Number, 
+    default: 0 
+  },
+  totalRequests: {
     type: Number, 
     default: 0 
   },

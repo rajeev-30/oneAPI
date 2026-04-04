@@ -5,6 +5,7 @@ declare module "express" {
     interface Request {
         userId?:       string;  
         apiKey?:       string;
+        apiKeyId?:     string;
         subscription?: ISubscription; 
         billingSource?: "plan" | "wallet"; 
     }
