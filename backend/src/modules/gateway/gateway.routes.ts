@@ -8,8 +8,6 @@ import { rateLimitMiddleware } from "@middlewares/rateLimit.middleware";
 
 const router = Router();
 
-// subscriptionMiddleware will be added once we have the subscription logic in place
-// subscriptionMiddleware, rateLimitMiddleware,
 router.route("/completions").post(authMiddleware, apiKeyMiddleware, subscriptionMiddleware, rateLimitMiddleware, chatCompletion);
 
 export default router;
