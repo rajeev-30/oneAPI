@@ -66,6 +66,65 @@ export const getProviders = async (req: Request, res: Response) => {
     }
 }
 
+export const getProvider = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const provider = await Provider.findById(id);
+
+        if (!provider) {
+            return sendResponse(res, 404, {
+                message: "Provider not found",
+                success: false,
+            });
+        }
+
+        return sendResponse(res, 200, {
+            message: "Provider fetched successfully",
+            success: true,
+            data: provider
+        });
+    } catch (error) {
+        return sendResponse(res, 500, {
+            message: "Error fetching provider",
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error"
+        });
+    }
+};
+
+export const updateProvider = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const result = providerSchema.partial().safeParse(req.body);
+        if (!result.success) {
+            return sendResponse(res, 400, {
+                message: result.error.issues[0].message,
+                success: false,
+            });
+        }
+
+        const updatedProvider = await Provider.findByIdAndUpdate(id, { $set: result.data }, { returnDocument: "after" });
+        if (!updatedProvider) {
+            return sendResponse(res, 404, {
+                message: "Provider not found",
+                success: false
+            });
+        }
+
+        return sendResponse(res, 200, {
+            message: "Provider updated successfully",
+            success: true,
+            data: updatedProvider
+        });
+    } catch (error) {
+        return sendResponse(res, 500, {
+            message: "Error updating provider",
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error"
+        });
+    }
+};
+
 export const deleteProvider = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
