@@ -7,9 +7,7 @@ import modelRoute from "../modules/model/model.routes"
 import gatewayRoute from "../modules/gateway/gateway.routes";
 import planRoute from "../modules/plan/plan.routes";
 import walletRoute from "../modules/wallet/wallet.routes";
-
-
-
+import usageRoute from "../modules/usage/usage.routes";
 
 const app = express();
 
@@ -21,5 +19,6 @@ app.use("/model", modelRoute);
 app.use("/chat", gatewayRoute);
 app.use("/plan", planRoute);
 app.use("/wallet", walletRoute);
+app.use("/usage", usageRoute);
 
 export default app;

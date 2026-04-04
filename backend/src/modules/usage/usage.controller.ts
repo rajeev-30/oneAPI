@@ -38,7 +38,7 @@ export const getMonthlyUsage = async (req: Request, res: Response) => {
     }
 }
 
-export const firstUsageOfYear = async (req: Request, res: Response) => {
+export const firstYearOfUsage = async (req: Request, res: Response) => {
     try {
         const firstUsage = await Usage.findOne({ user: req.userId })
         .sort({ month: 1 })
