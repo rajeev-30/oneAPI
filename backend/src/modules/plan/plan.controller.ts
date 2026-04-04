@@ -1,13 +1,14 @@
 import { planSchema } from "./plan.validation"
 import Plan from "./plan.model";
 import { Request, Response } from "express";
+import { sendResponse } from "@utils/response";
 
 
 export const createPlan = async (req: Request, res: Response) => {
     try {
         const result = planSchema.safeParse(req.body)
         if (!result.success) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false,
             });
@@ -17,7 +18,7 @@ export const createPlan = async (req: Request, res: Response) => {
 
         const existingPlan = await Plan.findOne({ price });
         if (existingPlan) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: "Plan with this price already exists",
                 success: false,
             });
@@ -31,13 +32,13 @@ export const createPlan = async (req: Request, res: Response) => {
         });
         await plan.save();
 
-        return res.status(201).json({
+        return sendResponse(res, 201, {
             message: "Plan created successfully",
             success: true,
-            plan
+            data: plan
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error creating plan",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
@@ -50,19 +51,19 @@ export const getPlans = async (_: Request, res: Response) => {
         const plans = await Plan.find();
 
         if (!plans || plans.length === 0) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "No plans found",
                 success: false,
             });
         }
 
-        return res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Plans retrieved successfully",
             success: true,
-            plans
+            data: plans
         });
     } catch (error) {
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error fetching plans",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
@@ -76,18 +77,18 @@ export const deletePlan = async (req: Request, res: Response) => {
 
         const plan = await Plan.findByIdAndDelete(id);
         if (!plan) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "Plan not found",
                 success: false,
             });
         }
 
-        return res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Plan deleted successfully",
             success: true,
         });
     } catch (error) {
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error deleting plan",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

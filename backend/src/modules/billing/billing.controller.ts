@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { createBillingInput } from "./billing.validation";
 import Billing from "./billing.model";
+import { sendResponse } from "@utils/response";
 
 export const createBilling = async (req: Request, res: Response) => {
     try {
         const result = createBillingInput.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false,
             });
@@ -15,13 +16,13 @@ export const createBilling = async (req: Request, res: Response) => {
         const billing = new Billing(result.data);
         await billing.save();
 
-        res.status(201).json({
+        return sendResponse(res, 201, {
             message: "Billing record created successfully",
             success: true,
-            billing,
+            data: billing,
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error creating billing record",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
@@ -35,19 +36,19 @@ export const getBillings = async (req: Request, res: Response) => {
         const billings = await Billing.find();
 
         if (!billings || billings.length === 0) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "No billing records found",
                 success: false,
             });
         }
 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Billing records fetched successfully",
             success: true,
-            billings,
+            data: billings,
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error fetching billing records",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
@@ -61,18 +62,18 @@ export const deleteBilling = async (req: Request, res: Response) => {
         const billing = await Billing.findByIdAndDelete(id);
 
         if (!billing) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "Billing record not found",
                 success: false,
             });
         }
 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Billing record deleted successfully",
             success: true,
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error deleting billing record",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",

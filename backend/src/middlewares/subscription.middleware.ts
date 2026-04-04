@@ -3,9 +3,6 @@ import Subscription from "@modules/subscription/subscription.model";
 
 type BillingSource = "plan" | "wallet";
 
-//i guess code is done now, 
-// first checkand learn what gpt has done(make any changes if needed), 
-// and the test.
 export const subscriptionMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const subscription = await Subscription.findOne({

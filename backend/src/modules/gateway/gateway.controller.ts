@@ -6,13 +6,14 @@ import { Types } from "mongoose";
 import { routeToProvider } from "@services/providerRouter.service";
 import Wallet from "@modules/wallet/wallet.model";
 import { recordActualUsage } from "@services/redisRateLimiter.service";
+import { sendResponse } from "@utils/response";
 
 
 export const chatCompletion = async (req: Request, res: Response) => {
     try {
         const result = chatCompletionSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false,
             });
@@ -30,7 +31,7 @@ export const chatCompletion = async (req: Request, res: Response) => {
             .populate("provider")
             .populate("billing");
         if (!model) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "We currently do not support the requested model",
                 success: false,
             });
@@ -73,7 +74,8 @@ export const chatCompletion = async (req: Request, res: Response) => {
                 }
             }
 
-            res.status(200).json({
+            sendResponse(res, 200, {
+                message: "Response generated successfully",
                 success: true,
                 data: {
                     choices: [{ message: { role: "assistant", content: fullText } }],
@@ -86,30 +88,33 @@ export const chatCompletion = async (req: Request, res: Response) => {
         const totalTokens = Number(usage?.total_tokens ?? 0);
         const totalCost = Number(usage?.totalCost ?? 0);
 
-
         if (req.billingSource === "plan") {
-            await recordActualUsage({
+            recordActualUsage({
                 userId: req.userId as string,
                 actualTokens: totalTokens,
             });
         }
 
-        await settleBilling(
-            req.userId as string,
-            req.billingSource as "plan" | "wallet" | undefined,
-            totalCost
-        );
+        if(req.billingSource === "wallet"){
+            //used await here to ensure billing is settled before next request comes in, 
+            //which could cause issues with concurrent requests and wallet balance updates. 
+            //We can optimize this later by using a queue or background job if needed.
+            await settleBilling(
+                req.userId as string,
+                req.billingSource as "plan" | "wallet" | undefined,
+                totalCost
+            );
+        }
         
-        await updateUsage(
+        updateUsage(
             req.userId as string,
             model._id,
             totalTokens,
             totalCost,
         );
 
-        return;
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Please try again later or use different model",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
@@ -147,14 +152,14 @@ const updateUsage = async (
             {
                 $inc: {
                     totalRequests: 1,
-                    totalTokens: totalTokens,
+                    totalTokens,
                     totalCost: cost,
                 },
                 $push: {
                     modelBreakdown: {
                         model: modelId,
                         tokens: totalTokens,
-                        cost: cost,
+                        cost,
                     },
                 },
             },
@@ -164,14 +169,13 @@ const updateUsage = async (
 };
 
 
-
+// call this to settle billing after getting response from provider
 const settleBilling = async (
     userId: string,
     billingSource: "plan" | "wallet" | undefined,
     cost: number
 ) => {
-    if (billingSource === "wallet") {
-        
+    if (billingSource === "wallet") { 
         await Wallet.findOneAndUpdate(
             { user: userId },
             [

@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { ProviderInput } from "./provider.validation";
 import Provider from "./provider.model";
+import { sendResponse } from "@utils/response";
 
 
 export const createProvider = async (req: Request, res: Response) => {
     try {
         const result = ProviderInput.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message:  result.error.issues[0].message,
                 success: false,
             });
@@ -17,7 +18,7 @@ export const createProvider = async (req: Request, res: Response) => {
 
         const existingProvider = await Provider.findOne({ slug });
         if (existingProvider) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: "Provider with this slug already exists",
                 success: false
             });
@@ -26,13 +27,13 @@ export const createProvider = async (req: Request, res: Response) => {
         const provider = new Provider({ name, slug });
         await provider.save();
 
-        res.status(201).json({
+        return sendResponse(res, 201, {
             message: "Provider created successfully",
             success: true,
-            provider
+            data: provider
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error creating provider",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
@@ -45,19 +46,19 @@ export const getProviders = async (req: Request, res: Response) => {
         const providers = await Provider.find();
 
         if (!providers || providers.length === 0) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "No providers found",
                 success: false,
             });
         }
 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Providers fetched successfully",
             success: true,
-            providers
+            data: providers
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error fetching providers",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
@@ -70,18 +71,18 @@ export const deleteProvider = async (req: Request, res: Response) => {
         const { id } = req.params;
         const provider = await Provider.findByIdAndDelete(id);
         if (!provider) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "Provider not found",
                 success: false
             });
         }
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Provider deleted successfully",
             success: true,
-            provider
+            data: provider
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error deleting provider",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

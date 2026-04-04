@@ -2,13 +2,14 @@ import Subscription from "@modules/subscription/subscription.model";
 import Wallet from "./wallet.model";
 import { walletSchema } from "./wallet.validation";
 import { Request, Response } from "express";
+import { sendResponse } from "@utils/response";
 
 
 export const addBalance = async (req: Request, res: Response) => {
     try {
         const result = walletSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false,
             });
@@ -36,13 +37,13 @@ export const addBalance = async (req: Request, res: Response) => {
         }
         await wallet.save();
 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Balance added successfully",
             success: true,
-            wallet
+            data: wallet,
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error adding balance",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
@@ -56,19 +57,19 @@ export const getWallet = async (req: Request, res: Response) => {
         const wallet = await Wallet.findOne({ user: userId });
 
         if (!wallet) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "Wallet not found",
                 success: false,
             });
         }
 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Wallet retrieved successfully",
             success: true,
-            wallet
+            data: wallet
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error retrieving balance",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

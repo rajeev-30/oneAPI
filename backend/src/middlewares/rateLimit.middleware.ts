@@ -17,7 +17,7 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
         const plan = subscription.plan as any;
 
         const limits = {
-            requestsPerMinute: 2,
+            requestsPerMinute: plan?.limits?.requestsPerMinute ?? 100,
             tokensPerMinute: plan?.limits?.tokensPerMinute ?? 10000,
             requestsPerDay: plan?.limits?.requestsPerDay ?? 1000,
             tokensPerDay: plan?.limits?.tokensPerDay ?? 100000,

@@ -22,9 +22,18 @@ const usageSchema = new Schema<IUsage>({
 
   month: String, // "2026-03"
 
-  totalRequests: Number,
-  totalTokens: Number,
-  totalCost: Number,
+  totalRequests: {
+    type: Number,
+    default: 0,
+  },
+  totalTokens: {
+    type: Number,
+    default: 0,
+  },
+  totalCost: {
+    type: Number,
+    default: 0,
+  },
 
   modelBreakdown: [
     {

@@ -1,3 +1,4 @@
+import { sendResponse } from "@utils/response";
 import User from "./user.model";
 import { comparePassword, generateAuthToken } from "./user.service";
 import { signupInput, loginInput } from "./user.validation";
@@ -10,7 +11,7 @@ export const SignUp = async (req: Request, res: Response) => {
         const result = signupInput.safeParse(req.body);
         
         if(!result.success){
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false
             });
@@ -21,7 +22,7 @@ export const SignUp = async (req: Request, res: Response) => {
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({
+            return sendResponse(res, 409, {
                 message: "User already exists",
                 success: false
             });
@@ -34,7 +35,7 @@ export const SignUp = async (req: Request, res: Response) => {
         const token = generateAuthToken(newUser._id.toString());
 
 
-        res.status(201)
+        return res.status(201)
         .cookie('token', token, {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -44,11 +45,11 @@ export const SignUp = async (req: Request, res: Response) => {
         .json({
             message: "User registered successfully",
             success: true,
-            user: newUser
+            data: newUser
         });
     }catch(error){
         console.log("SignUp failed: " + error);
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "SignUp failed due to server issue",
             success: false,
             error:error instanceof Error ? error.message : "Unknown error"
@@ -61,7 +62,7 @@ export const Login = async (req: Request, res: Response)=> {
     try{
         const result = loginInput.safeParse(req.body);
         if(!result.success){
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false
             });
@@ -71,7 +72,7 @@ export const Login = async (req: Request, res: Response)=> {
         // Validate user credentials
         const user = await User.findOne({ email });
         if (!user || !comparePassword(password, user.password)) {
-            return res.status(401).json({
+            return sendResponse(res, 401, {
                 message: "Invalid email or password",
                 success: false,
             });
@@ -80,7 +81,7 @@ export const Login = async (req: Request, res: Response)=> {
         // Generate JWT token
         const token = generateAuthToken(user._id.toString());
 
-        res.status(200)
+        return res.status(200)
         .cookie('token', token, {
             httpOnly:true, 
             maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -90,11 +91,11 @@ export const Login = async (req: Request, res: Response)=> {
         .json({
             message: "User logged in successfully",
             success: true,
-            user
+            data: user
         });
     }catch(error){
         console.log("Login failed: " + error);
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Login failed due to server issue",
             success: false,
             error:error instanceof Error ? error.message : "Unknown error"
@@ -116,7 +117,7 @@ export const Logout  = async(_req: Request, res:Response) => {
         })
     }catch(error){
         console.log("Logout failed: " + error);
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Logout failed due to server issue",
             success: false,
             error:error instanceof Error ? error.message : "Unknown error"
@@ -129,19 +130,19 @@ export const getUser = async(req:Request, res:Response) => {
         const id = req.userId;
         const user = await User.findById(id).select("-password");
         if(!user){
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "User not found",
                 success: false
             });
         }
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "User found successfully",
             success: true,
-            user
+            data: user
         });
     }catch(error){
         console.log("GetUser failed: " + error);
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "GetUser failed due to server issue",
             success: false,
             error:error instanceof Error ? error.message : "Unknown error"

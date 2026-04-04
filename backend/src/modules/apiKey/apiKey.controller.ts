@@ -2,6 +2,7 @@ import {Request, Response} from "express"
 import crypto from "crypto";
 import ApiKey from "./apiKey.model";
 import { nameValidation } from "@modules/apiKey/apiKey.validation";
+import { sendResponse } from "@utils/response";
 
 
 export const generateApiKey = async(req: Request, res:Response) =>{
@@ -9,7 +10,7 @@ export const generateApiKey = async(req: Request, res:Response) =>{
         const key = "sk-oneapi-" + crypto.randomBytes(24).toString("hex");
         const result = nameValidation.safeParse(req.body);
         if(!result.success){
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false
             });
@@ -22,16 +23,16 @@ export const generateApiKey = async(req: Request, res:Response) =>{
         const apiKey = new ApiKey({ name, user: userId, key });
         await apiKey.save();
 
-        res.status(201).json({
+        return sendResponse(res, 201, {
             message: "API key generated successfully",
             success: true,
-            apiKey
+            data: apiKey
         });
     }catch(error){
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error generating API key",
             success: false,
-            error: error instanceof Error ? error : "Unknown error"
+            error: error instanceof Error ? error.message : "Unknown error"
         });
     }
 }
@@ -42,21 +43,21 @@ export const getApiKeys = async(req:Request, res:Response) => {
         const userId = req.userId;
         const apiKeys = await ApiKey.find({ user: userId });
         if(!apiKeys || apiKeys.length === 0){
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "No API keys found",
                 success: false
             });
         }
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "API keys found successfully",
             success: true,
-            apiKeys
+            data: apiKeys
         });
     }catch(error){
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error retrieving API key",
             success: false,
-            error: error instanceof Error ? error : "Unknown error"
+            error: error instanceof Error ? error.message : "Unknown error"
         });
     }
 }
@@ -70,21 +71,21 @@ export const deleteApiKey = async (req: Request, res: Response) => {
         // Find the API key by ID and ensure it belongs to the user
         const apiKey = await ApiKey.findOneAndDelete({ _id: id, user: userId });
         if (!apiKey) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "API key not found",
                 success: false
             });
         }
 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "API key deleted successfully",
             success: true
         });
     } catch (error) {
-        res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error deleting API key",
             success: false,
-            error: error instanceof Error ? error : "Unknown error"
+            error: error instanceof Error ? error.message : "Unknown error"
         });
     }
 };

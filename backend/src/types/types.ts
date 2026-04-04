@@ -9,4 +9,11 @@ export type ChatChunk =
             total_tokens: number;
             totalCost?: number;
         };
-      };
+    };
+
+export type ApiResponse<T = unknown> = {
+    success: boolean;
+    message: string;
+    data?: T | null;
+    error?: unknown;
+};

@@ -4,13 +4,14 @@ import  Model  from "./model.model";
 import Provider from "@modules/provider/provider.model";
 import Billing from "@modules/billing/billing.model";
 import { Types } from "mongoose";
+import { sendResponse } from "@utils/response";
 
 
 export const createModel = async (req: Request, res: Response) => {
     try{
         const result = modelSchema.safeParse(req.body);
         if(!result.success){
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: result.error.issues[0].message,
                 success: false,
             });
@@ -19,7 +20,7 @@ export const createModel = async (req: Request, res: Response) => {
         const existingModel = await Model.findOne({ slug });
 
         if(existingModel){
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: "Model with this slug already exists",
                 success: false
             });
@@ -27,7 +28,7 @@ export const createModel = async (req: Request, res: Response) => {
 
         const existingProvider = await Provider.findById(provider);
         if (!existingProvider) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: "Invalid provider",
                 success: false
             });
@@ -35,22 +36,22 @@ export const createModel = async (req: Request, res: Response) => {
 
         const existingBilling = await Billing.findById(billing);
         if (!existingBilling) {
-            return res.status(400).json({
+            return sendResponse(res, 400, {
                 message: "Invalid billing",
                 success: false
             });
         }
 
-        const model  = new Model(result.data);
+        const model = new Model(result.data);
         await model.save();
 
-        return res.status(201).json({
+        return sendResponse(res, 201, {
             message: "Model created successfully",
             success: true,
             data: model
         });
     }catch(error){
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error creating model",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
@@ -62,19 +63,19 @@ export const getModels = async(req:Request, res:Response) => {
     try{
         const models = await Model.find().populate("provider").populate("billing");
         if(!models || models.length === 0) {
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "Models not found",
                 success: false,
             });   
         }
                 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Models fetched successfully",
             success: true,
-            models
+            data: models
         });
     }catch(error){
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error fetching model",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"
@@ -88,19 +89,19 @@ export const deleteModel = async(req:Request, res:Response) => {
         const model = await Model.findByIdAndDelete(id);
 
         if(!model){
-            return res.status(404).json({
+            return sendResponse(res, 404, {
                 message: "Model not found",
                 success: false,
             });
         }
 
-        res.status(200).json({
+        return sendResponse(res, 200, {
             message: "Model deleted successfully",
             success: true,
         });
     }catch(error){
         console.log(error)
-        return res.status(500).json({
+        return sendResponse(res, 500, {
             message: "Error deleting model",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error"

@@ -11,15 +11,15 @@ const PORT = process.env.PORT || 8000;
 
 async function startServer() {
   try {
+    // Connect MongoDB, Redis
+    await connectDB();
+    await initRedis();
+
     const server = http.createServer(app);
 
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-
-    // Connect MongoDB, Redis
-    await connectDB();
-    await initRedis();
 
     // Graceful shutdown
     process.on("SIGTERM", shutdown);
