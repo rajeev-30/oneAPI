@@ -67,7 +67,6 @@ export const getModels = async (req: Request, res: Response) => {
         const redis = getRedisClient();
         const cacheKey = "models:all";
 
-        // Check cache
         const cached = await redis.get(cacheKey);
         if (cached) {
             return sendResponse(res, 200, {
@@ -77,7 +76,6 @@ export const getModels = async (req: Request, res: Response) => {
             });
         }
 
-        // Fetch from DB
         const models = await Model.find()
             .populate("provider")
             .populate("billing");
@@ -89,7 +87,6 @@ export const getModels = async (req: Request, res: Response) => {
             });
         }
 
-        // Cache the result
         await redis.set(cacheKey, JSON.stringify(models));
 
         return sendResponse(res, 200, {
@@ -100,6 +97,88 @@ export const getModels = async (req: Request, res: Response) => {
     } catch (error) {
         return sendResponse(res, 500, {
             message: "Error fetching model",
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+};
+
+export const getModel = async (req: Request, res: Response) => {
+    try {
+        const redis = getRedisClient();
+        const { id } = req.params;
+        const cacheKey = `model:${id}`;
+
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+            return sendResponse(res, 200, {
+                message: "Model fetched successfully",
+                success: true,
+                data: JSON.parse(cached),
+            });
+        }
+
+        const model = await Model.findById(id)
+            .populate("provider")
+            .populate("billing");
+
+        if (!model) {
+            return sendResponse(res, 404, {
+                message: "Model not found",
+                success: false,
+            });
+        }
+
+        await redis.set(cacheKey, JSON.stringify(model));
+
+        return sendResponse(res, 200, {
+            message: "Model fetched successfully",
+            success: true,
+            data: model,
+        });
+    } catch (error) {
+        return sendResponse(res, 500, {
+            message: "Error fetching model",
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
+    }
+};
+
+export const updateModel = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const result = modelSchema.partial().safeParse(req.body);
+        if (!result.success) {
+            return sendResponse(res, 400, {
+                message: result.error.issues[0].message,
+                success: false,
+            });
+        }
+
+        const model = await Model.findByIdAndUpdate(id, result.data, { returnDocument: "after" })
+            .populate("provider")
+            .populate("billing");
+
+        if (!model) {
+            return sendResponse(res, 404, {
+                message: "Model not found",
+                success: false,
+            });
+        }
+
+        const redis = getRedisClient();
+        await redis.del("models:all");
+        await redis.del(`model:${id}`);
+
+        return sendResponse(res, 200, {
+            message: "Model updated successfully",
+            success: true,
+            data: model,
+        });
+    } catch (error) {
+        return sendResponse(res, 500, {
+            message: "Error updating model",
             success: false,
             error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -120,6 +199,7 @@ export const deleteModel = async(req:Request, res:Response) => {
         
         const redis = getRedisClient();
         await redis.del("models:all");
+        await redis.del(`model:${id}`);
 
         return sendResponse(res, 200, {
             message: "Model deleted successfully",
