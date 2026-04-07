@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const billingSchema = z.object({
-    name: z.string({ message: "Name is required" }),
+    name: z.string({ message: "Name is required and must be a string" }),
     inputCostPer1KTokens: z
         .number({ message: "Input cost must be a number" })
         .positive("Input cost must be a positive number"),

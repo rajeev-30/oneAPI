@@ -1,14 +1,13 @@
 import http from "http";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import "dotenv/config";
 import app from "./app";
 import connectDB from "./config/database";
 import { initRedis, closeRedis } from "./config/redis";
 import { startSubscriptionExpiryCron } from "./jobs/expireSubscription.job";
 
-dotenv.config();
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 9000;
 
 async function startServer() {
   try {

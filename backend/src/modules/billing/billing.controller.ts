@@ -2,19 +2,13 @@ import { Request, Response } from "express";
 import { billingSchema } from "./billing.validation";
 import Billing from "./billing.model";
 import { sendResponse } from "@utils/response";
+import { createBillingService, deleteBillingService, getBillingService, getBillingsService, updateBillingService } from "./billing.service";
+import { sendErrorResponse } from "@utils/errorResponse";
 
 export const createBilling = async (req: Request, res: Response) => {
     try {
-        const result = billingSchema.safeParse(req.body);
-        if (!result.success) {
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false,
-            });
-        }
-
-        const billing = new Billing(result.data);
-        await billing.save();
+        const userId = req.userId as string;
+        const billing = await createBillingService(userId, req.body);
 
         return sendResponse(res, 201, {
             message: "Billing record created successfully",
@@ -22,18 +16,14 @@ export const createBilling = async (req: Request, res: Response) => {
             data: billing,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error creating billing record",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error creating billing record");
     }
 };
 
 
 export const getBillings = async (req: Request, res: Response) => {
     try {
-        const billings = await Billing.find();
+        const billings = await getBillingsService();
 
         if (!billings || billings.length === 0) {
             return sendResponse(res, 404, {
@@ -48,18 +38,14 @@ export const getBillings = async (req: Request, res: Response) => {
             data: billings,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error fetching billing records",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error fetching billing records");
     }
 };
 
 export const getBilling = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const billing = await Billing.findById(id);
+        const { id } = req.params as { id: string };
+        const billing = await getBillingService(id);
 
         if (!billing) {
             return sendResponse(res, 404, {
@@ -74,18 +60,14 @@ export const getBilling = async (req: Request, res: Response) => {
             data: billing,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error fetching billing record",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error fetching billing record");
     }
 };
 
 export const deleteBilling = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const billing = await Billing.findByIdAndDelete(id);
+        const { id } = req.params as { id: string };
+        const billing = await deleteBillingService(id);
 
         if (!billing) {
             return sendResponse(res, 404, {
@@ -99,26 +81,15 @@ export const deleteBilling = async (req: Request, res: Response) => {
             success: true,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error deleting billing record",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error deleting billing record");
     }
 };
 
 export const updateBilling = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const result = billingSchema.partial().safeParse(req.body);
-        if (!result.success) {
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false,
-            });
-        }
+        const { id } = req.params as { id: string };
 
-        const billing = await Billing.findByIdAndUpdate(id, { $set: result.data }, { returnDocument: 'after' });
+        const billing = await updateBillingService(id, req.body);
 
         if (!billing) {
             return sendResponse(res, 404, {
@@ -133,10 +104,6 @@ export const updateBilling = async (req: Request, res: Response) => {
             data: billing,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error updating billing record",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error updating billing record");
     }
 };

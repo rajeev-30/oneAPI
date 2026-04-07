@@ -4,8 +4,8 @@ import { apiKeySchema } from "@modules/apiKey/apiKey.validation";
 import { getRedisClient } from "@config/redis";
 import { AppError } from "../../types/errors";
 
-export const getApiKeyCacheKey = (userId: string, apiKeyId: string) => `apiKey:${apiKeyId}:${userId}`;
-export const getApiKeysCacheKey = (userId: string) => `apiKeys:${userId}`;
+const getApiKeyCacheKey = (userId: string, apiKeyId: string): string => `apiKey:${apiKeyId}:${userId}`;
+const getApiKeysCacheKey = (userId: string): string => `apiKeys:${userId}`;
 
 // generate
 export const generateApiKeyService = async (userId: string, body: unknown) => {
