@@ -1,20 +1,13 @@
-import { chatCompletionSchema } from "./gateway.validation";
 import { Request, Response } from "express";
-import Model from "@modules/model/model.model";
 import { routeToProvider } from "@services/providerRouter.service";
 import { recordActualUsage } from "@services/redisRateLimiter.service";
 import { sendResponse } from "@utils/response";
-import {settleBilling, updateUsage, updateApiKeyUsage} from "./gateway.service"
+import {settleBilling, updateUsage, updateApiKeyUsage, chatCompletionValidation, getModel} from "./gateway.service"
+import { sendErrorResponse } from "@utils/errorResponse";
 
 export const chatCompletion = async (req: Request, res: Response) => {
     try {
-        const result = chatCompletionSchema.safeParse(req.body);
-        if (!result.success) {
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false,
-            });
-        }
+        const result = chatCompletionValidation(req.body);
 
         const {
             model: modelSlug,
@@ -22,17 +15,9 @@ export const chatCompletion = async (req: Request, res: Response) => {
             stream,
             temperature,
             max_tokens,
-        } = result.data;
+        } = result;
 
-        const model = await Model.findOne({ slug: modelSlug })
-            .populate("provider")
-            .populate("billing");
-        if (!model) {
-            return sendResponse(res, 404, {
-                message: "We currently do not support the requested model",
-                success: false,
-            });
-        }
+        const model = await getModel(modelSlug);
 
         const generator = routeToProvider({
             model,
@@ -119,11 +104,7 @@ export const chatCompletion = async (req: Request, res: Response) => {
         );
 
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Please try again later or use different model",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Please try again later or use different model");
     }
 };
 

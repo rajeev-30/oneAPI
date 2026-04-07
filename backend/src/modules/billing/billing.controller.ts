@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { billingSchema } from "./billing.validation";
-import Billing from "./billing.model";
 import { sendResponse } from "@utils/response";
 import { createBillingService, deleteBillingService, getBillingService, getBillingsService, updateBillingService } from "./billing.service";
 import { sendErrorResponse } from "@utils/errorResponse";

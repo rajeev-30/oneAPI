@@ -5,6 +5,7 @@ import { anthropicChat } from "@services/anthropic.service";
 import { googleChat } from "@services/google.service";
 import { groqChat } from "@services/groq.service";
 import { openaiChat } from "./openai.service";
+import { AppError } from "../types/errors";
 
 
 interface RouteOptions {
@@ -39,6 +40,6 @@ export async function* routeToProvider(options: RouteOptions): AsyncGenerator<Ch
             yield* openaiChat(options);
             break;
         default:
-            throw new Error(`'${providerSlug}' is not supported yet`);
+            throw new AppError(`'${providerSlug}' is not supported yet`, 400, "PROVIDER_NOT_SUPPORTED", "Please choose a different model");
     }
 }
