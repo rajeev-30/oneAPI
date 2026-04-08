@@ -4,12 +4,10 @@ import { billingSchema } from "./billing.validation";
 import { AppError } from "../../types/errors";
 import Billing from "./billing.model";
 
-const getBillingCacheKey = (userId: string, billingId: string): string => `billing:${billingId}:${userId}`;
-const getBillingsCacheKey = (userId: string): string => `billings:${userId}`;
+const getBillingCacheKey = (billingId: string): string => `billing:${billingId}`;
+const getBillingsCacheKey = (): string => `billings:all`;
 
-const adminCacheKey = process.env.ADMIN_CACHE_KEY || "admin";
-
-export const createBillingService = async (userId: string, body: unknown) => {
+export const createBillingService = async (body: unknown) => {
   const redis = getRedisClient();
 
   const result = billingSchema.safeParse(body);
@@ -17,11 +15,18 @@ export const createBillingService = async (userId: string, body: unknown) => {
     throw new AppError(result.error.issues[0].message, 400, "VALIDATION_ERROR", result.error.issues);
   }
 
+  const { name } = result.data;
+  
+  const existingBilling = await Billing.findOne({ name });
+  if (existingBilling) {
+    throw new AppError("Billing record with this name already exists", 400, "ALREADY_EXISTS", "Please choose a different name");
+  }
+
   const billing = new Billing(result.data);
   await billing.save();
 
-  await redis.del(getBillingsCacheKey(userId));
-  const cacheKey = getBillingCacheKey(userId, billing._id.toString());
+  await redis.del(getBillingsCacheKey());
+  const cacheKey = getBillingCacheKey(billing._id.toString());
   await redis.set(cacheKey, JSON.stringify(billing));
 
   return billing;
@@ -29,7 +34,7 @@ export const createBillingService = async (userId: string, body: unknown) => {
 
 export const getBillingsService = async () => {
   const redis = getRedisClient();
-  const cacheKey = getBillingsCacheKey(adminCacheKey);
+  const cacheKey = getBillingsCacheKey();
 
   const cached = await redis.get(cacheKey);
   if (cached) {
@@ -37,6 +42,10 @@ export const getBillingsService = async () => {
   }
 
   const billings = await Billing.find();
+  if (!billings || billings.length === 0) {
+    throw new AppError("No billing records found", 404, "NOT_FOUND", "Please provide a valid user ID");
+  }
+
   await redis.set(cacheKey, JSON.stringify(billings));
 
   return billings;
@@ -44,7 +53,7 @@ export const getBillingsService = async () => {
 
 export const getBillingService = async (billingId: string) => {
   const redis = getRedisClient();
-  const cacheKey = getBillingCacheKey(adminCacheKey, billingId);
+  const cacheKey = getBillingCacheKey(billingId);
 
   const cached = await redis.get(cacheKey);
   if (cached) {
@@ -52,6 +61,9 @@ export const getBillingService = async (billingId: string) => {
   }
 
   const billing = await Billing.findById(billingId);
+  if (!billing) {
+    throw new AppError("Billing record not found", 404, "NOT_FOUND", "Please provide a valid billing ID");
+  }
   await redis.set(cacheKey, JSON.stringify(billing));
 
   return billing;
@@ -62,13 +74,13 @@ export const deleteBillingService = async (billingId: string) => {
 
   const billing = await Billing.findByIdAndDelete(billingId);
   if (!billing) {
-    return false;
+    throw new AppError("Billing record not found", 404, "NOT_FOUND", "Please provide a valid billing ID");
   }
 
-  await redis.del(getBillingCacheKey(adminCacheKey, billingId));
-  await redis.del(getBillingsCacheKey(adminCacheKey));
+  await redis.del(getBillingCacheKey(billingId));
+  await redis.del(getBillingsCacheKey());
 
-  return true;
+  return billing;
 };
 
 export const updateBillingService = async (billingId: string, body: unknown) => {
@@ -81,12 +93,12 @@ export const updateBillingService = async (billingId: string, body: unknown) => 
 
   const billing = await Billing.findByIdAndUpdate(billingId, { $set: result.data }, { returnDocument: "after" });
   if (!billing) {
-    return null;
+    throw new AppError("Billing record not found", 404, "NOT_FOUND", "Please provide a valid billing ID");
   }
 
-  const cacheKey = getBillingCacheKey(adminCacheKey, billingId);
+  const cacheKey = getBillingCacheKey(billingId);
   await redis.set(cacheKey, JSON.stringify(billing));
-  await redis.del(getBillingsCacheKey(adminCacheKey));
+  await redis.del(getBillingsCacheKey());
 
   return billing;
 };

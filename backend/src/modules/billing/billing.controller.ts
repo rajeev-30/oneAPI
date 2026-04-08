@@ -5,8 +5,7 @@ import { sendErrorResponse } from "@utils/errorResponse";
 
 export const createBilling = async (req: Request, res: Response) => {
     try {
-        const userId = req.userId as string;
-        const billing = await createBillingService(userId, req.body);
+        const billing = await createBillingService(req.body);
 
         return sendResponse(res, 201, {
             message: "Billing record created successfully",
@@ -23,13 +22,6 @@ export const getBillings = async (req: Request, res: Response) => {
     try {
         const billings = await getBillingsService();
 
-        if (!billings || billings.length === 0) {
-            return sendResponse(res, 404, {
-                message: "No billing records found",
-                success: false,
-            });
-        }
-
         return sendResponse(res, 200, {
             message: "Billing records fetched successfully",
             success: true,
@@ -45,13 +37,6 @@ export const getBilling = async (req: Request, res: Response) => {
         const { id } = req.params as { id: string };
         const billing = await getBillingService(id);
 
-        if (!billing) {
-            return sendResponse(res, 404, {
-                message: "Billing record not found",
-                success: false,
-            });
-        }
-
         return sendResponse(res, 200, {
             message: "Billing record fetched successfully",
             success: true,
@@ -65,14 +50,7 @@ export const getBilling = async (req: Request, res: Response) => {
 export const deleteBilling = async (req: Request, res: Response) => {
     try {
         const { id } = req.params as { id: string };
-        const billing = await deleteBillingService(id);
-
-        if (!billing) {
-            return sendResponse(res, 404, {
-                message: "Billing record not found",
-                success: false,
-            });
-        }
+        await deleteBillingService(id);
 
         return sendResponse(res, 200, {
             message: "Billing record deleted successfully",
@@ -88,13 +66,6 @@ export const updateBilling = async (req: Request, res: Response) => {
         const { id } = req.params as { id: string };
 
         const billing = await updateBillingService(id, req.body);
-
-        if (!billing) {
-            return sendResponse(res, 404, {
-                message: "Billing record not found",
-                success: false,
-            });
-        }
 
         return sendResponse(res, 200, {
             message: "Billing record updated successfully",

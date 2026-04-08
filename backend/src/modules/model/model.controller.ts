@@ -1,52 +1,12 @@
 import { Request, Response } from "express";
-import { modelSchema } from "./model.validation";
-import  Model  from "./model.model";
-import Provider from "@modules/provider/provider.model";
-import Billing from "@modules/billing/billing.model";
 import { sendResponse } from "@utils/response";
-import { getRedisClient } from "@config/redis";
+import { createModelService, deleteModelService, getModelService, getModelsService, updateModelService } from "./model.service";
+import { sendErrorResponse } from "@utils/errorResponse";
 
 
 export const createModel = async (req: Request, res: Response) => {
     try{
-        const result = modelSchema.safeParse(req.body);
-        if(!result.success){
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false,
-            });
-        }
-        const { slug, billing, provider } = result.data;
-        const existingModel = await Model.findOne({ slug });
-
-        if(existingModel){
-            return sendResponse(res, 400, {
-                message: "Model with this slug already exists",
-                success: false
-            });
-        }
-
-        const existingProvider = await Provider.findById(provider);
-        if (!existingProvider) {
-            return sendResponse(res, 400, {
-                message: "Invalid provider",
-                success: false
-            });
-        }
-
-        const existingBilling = await Billing.findById(billing);
-        if (!existingBilling) {
-            return sendResponse(res, 400, {
-                message: "Invalid billing",
-                success: false
-            });
-        }
-
-        const model = new Model(result.data);
-        await model.save();
-        
-        const redis = getRedisClient();
-        await redis.del("models:all");
+        const model = await createModelService(req.body);
 
         return sendResponse(res, 201, {
             message: "Model created successfully",
@@ -54,40 +14,13 @@ export const createModel = async (req: Request, res: Response) => {
             data: model
         });
     }catch(error){
-        return sendResponse(res, 500, {
-            message: "Error creating model",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
-        });
+        return sendErrorResponse(res, error, 500, "Error creating model");
     }
 }
 
 export const getModels = async (req: Request, res: Response) => {
     try {
-        const redis = getRedisClient();
-        const cacheKey = "models:all";
-
-        const cached = await redis.get(cacheKey);
-        if (cached) {
-            return sendResponse(res, 200, {
-                message: "Models fetched successfully",
-                success: true,
-                data: JSON.parse(cached),
-            });
-        }
-
-        const models = await Model.find()
-            .populate("provider")
-            .populate("billing");
-
-        if (!models || models.length === 0) {
-            return sendResponse(res, 404, {
-                message: "Models not found",
-                success: false,
-            });
-        }
-
-        await redis.set(cacheKey, JSON.stringify(models));
+        const models = await getModelsService();
 
         return sendResponse(res, 200, {
             message: "Models fetched successfully",
@@ -95,41 +28,14 @@ export const getModels = async (req: Request, res: Response) => {
             data: models,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error fetching model",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error fetching models");
     }
 };
 
 export const getModel = async (req: Request, res: Response) => {
     try {
-        const redis = getRedisClient();
-        const { id } = req.params;
-        const cacheKey = `model:${id}`;
-
-        const cached = await redis.get(cacheKey);
-        if (cached) {
-            return sendResponse(res, 200, {
-                message: "Model fetched successfully",
-                success: true,
-                data: JSON.parse(cached),
-            });
-        }
-
-        const model = await Model.findById(id)
-            .populate("provider")
-            .populate("billing");
-
-        if (!model) {
-            return sendResponse(res, 404, {
-                message: "Model not found",
-                success: false,
-            });
-        }
-
-        await redis.set(cacheKey, JSON.stringify(model));
+        const { id } = req.params as { id: string };
+        const model = await getModelService(id);
 
         return sendResponse(res, 200, {
             message: "Model fetched successfully",
@@ -137,39 +43,14 @@ export const getModel = async (req: Request, res: Response) => {
             data: model,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error fetching model",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error fetching model");
     }
 };
 
 export const updateModel = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const result = modelSchema.partial().safeParse(req.body);
-        if (!result.success) {
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false,
-            });
-        }
-
-        const model = await Model.findByIdAndUpdate(id, { $set: result.data }, { returnDocument: "after" })
-            .populate("provider")
-            .populate("billing");
-
-        if (!model) {
-            return sendResponse(res, 404, {
-                message: "Model not found",
-                success: false,
-            });
-        }
-
-        const redis = getRedisClient();
-        await redis.del("models:all");
-        await redis.del(`model:${id}`);
+        const { id } = req.params as {id: string};
+        const model = await updateModelService(id, req.body);
 
         return sendResponse(res, 200, {
             message: "Model updated successfully",
@@ -177,40 +58,20 @@ export const updateModel = async (req: Request, res: Response) => {
             data: model,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error updating model",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error updating model");
     }
 };
 
 export const deleteModel = async(req:Request, res:Response) => {
     try{
-        const { id } = req.params;
-        const model = await Model.findByIdAndDelete(id);
-
-        if(!model){
-            return sendResponse(res, 404, {
-                message: "Model not found",
-                success: false,
-            });
-        }
-        
-        const redis = getRedisClient();
-        await redis.del("models:all");
-        await redis.del(`model:${id}`);
+        const { id } = req.params as {id: string};
+        await deleteModelService(id);
 
         return sendResponse(res, 200, {
             message: "Model deleted successfully",
             success: true,
         });
     }catch(error){
-        console.log(error)
-        return sendResponse(res, 500, {
-            message: "Error deleting model",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
-        });
+        return sendErrorResponse(res, error, 500, "Error deleting model");
     }
 }

@@ -1,13 +1,7 @@
 import { Request, Response } from "express";
 import { sendResponse } from "@utils/response";
 import { sendErrorResponse } from "@utils/errorResponse";
-import {
-  generateApiKeyService,
-  getApiKeysService,
-  getApiKeyService,
-  updateApiKeyNameService,
-  deleteApiKeyService,
-} from "./apiKey.service";
+import { generateApiKeyService, getApiKeysService, getApiKeyService, updateApiKeyNameService, deleteApiKeyService } from "./apiKey.service";
 
 export const generateApiKey = async (req: Request, res: Response) => {
   try {
@@ -29,13 +23,6 @@ export const getApiKeys = async (req: Request, res: Response) => {
     const userId = req.userId as string;
     const apiKeys = await getApiKeysService(userId);
 
-    if (!apiKeys || apiKeys.length === 0) {
-      return sendResponse(res, 404, {
-        message: "No API keys found",
-        success: false,
-      });
-    }
-
     return sendResponse(res, 200, {
       message: "API keys fetched successfully",
       success: true,
@@ -52,12 +39,6 @@ export const getApiKey = async (req: Request, res: Response) => {
     const { id } = req.params as { id: string };
 
     const apiKey = await getApiKeyService(userId, id);
-    if (!apiKey) {
-      return sendResponse(res, 404, {
-        message: "API key not found",
-        success: false,
-      });
-    }
 
     return sendResponse(res, 200, {
       message: "API key fetched successfully",
@@ -75,12 +56,6 @@ export const updateApiKeyName = async (req: Request, res: Response) => {
     const { id } = req.params as { id: string };
 
     const apiKey = await updateApiKeyNameService(userId, id, req.body);
-    if (!apiKey) {
-      return sendResponse(res, 404, {
-        message: "API key not found",
-        success: false,
-      });
-    }
 
     return sendResponse(res, 200, {
       message: "API key updated successfully",
@@ -97,13 +72,7 @@ export const deleteApiKey = async (req: Request, res: Response) => {
     const userId = req.userId as string;
     const { id } = req.params as { id: string };
 
-    const deleted = await deleteApiKeyService(userId, id);
-    if (!deleted) {
-      return sendResponse(res, 404, {
-        message: "API key not found",
-        success: false,
-      });
-    }
+    await deleteApiKeyService(userId, id);
 
     return sendResponse(res, 200, {
       message: "API key deleted successfully",

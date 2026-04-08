@@ -19,6 +19,11 @@ export const generateApiKeyService = async (userId: string, body: unknown) => {
 
   const { name } = result.data;
 
+  const existingApiKey = await ApiKey.findOne({ name, user: userId });
+  if (existingApiKey) {
+    throw new AppError("API key with this name already exists", 400, "ALREADY_EXISTS", "Please choose a different name");
+  }
+
   const apiKey = new ApiKey({ name, user: userId, key });
   await apiKey.save();
 
@@ -40,6 +45,10 @@ export const getApiKeysService = async (userId: string) => {
   }
 
   const apiKeys = await ApiKey.find({ user: userId });
+  if (!apiKeys || apiKeys.length === 0) {
+    throw new AppError("No API keys found", 404, "NOT_FOUND", "Please provide a valid user ID");
+  }
+
   await redis.set(cacheKey, JSON.stringify(apiKeys));
 
   return apiKeys;
@@ -57,7 +66,7 @@ export const getApiKeyService = async (userId: string, id: string) => {
 
   const apiKey = await ApiKey.findOne({ _id: id, user: userId });
   if (!apiKey) {
-    return null;
+    throw new AppError("API key not found", 404, "NOT_FOUND", "Please provide a valid API key ID");
   }
 
   await redis.set(cacheKey, JSON.stringify(apiKey));
@@ -80,7 +89,7 @@ export const updateApiKeyNameService = async (userId: string, id: string, body: 
   );
 
   if (!apiKey) {
-    return null;
+    throw new AppError("API key not found", 404, "NOT_FOUND", "Please provide a valid API key ID");
   }
 
   const cacheKey = getApiKeyCacheKey(userId, id);
@@ -96,11 +105,11 @@ export const deleteApiKeyService = async (userId: string, id: string) => {
 
   const apiKey = await ApiKey.findOneAndDelete({ _id: id, user: userId });
   if (!apiKey) {
-    return false;
+    throw new AppError("API key not found", 404, "API_KEY_NOT_FOUND", "Please provide a valid API key ID");
   }
 
   await redis.del(getApiKeyCacheKey(userId, id));
   await redis.del(getApiKeysCacheKey(userId));
 
-  return true;
+  return apiKey;
 };
