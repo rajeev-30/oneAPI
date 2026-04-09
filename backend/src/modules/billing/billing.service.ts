@@ -19,7 +19,7 @@ export const createBillingService = async (body: unknown) => {
   
   const existingBilling = await Billing.findOne({ name });
   if (existingBilling) {
-    throw new AppError("Billing record with this name already exists", 400, "ALREADY_EXISTS", "Please choose a different name");
+    throw new AppError("Billing record with this name already exists", 400, "ALREADY_EXISTS", existingBilling);
   }
 
   const billing = new Billing(result.data);

@@ -21,7 +21,7 @@ export const generateApiKeyService = async (userId: string, body: unknown) => {
 
   const existingApiKey = await ApiKey.findOne({ name, user: userId });
   if (existingApiKey) {
-    throw new AppError("API key with this name already exists", 400, "ALREADY_EXISTS", "Please choose a different name");
+    throw new AppError("API key with this name already exists", 400, "ALREADY_EXISTS", existingApiKey);
   }
 
   const apiKey = new ApiKey({ name, user: userId, key });

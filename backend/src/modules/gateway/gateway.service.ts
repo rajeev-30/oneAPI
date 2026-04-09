@@ -21,7 +21,7 @@ export const getModel = async (modelSlug: string) => {
         .populate("billing");
 
     if(!model){
-        throw new AppError('We currently do not support the requested model', 400, "MODEL_NOT_SUPPORTED", "Please choose a different model");
+        throw new AppError('We currently do not support the requested model', 400, "NOT_SUPPORTED", "Please choose a different model");
     }
 
     return model;
