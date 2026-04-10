@@ -1,4 +1,5 @@
 import ApiKey from "@modules/apiKey/apiKey.model";
+import { sendErrorResponse } from "@utils/errorResponse";
 import { sendResponse } from "@utils/response";
 import {Request, Response, NextFunction} from "express"
 import { send } from "node:process";
@@ -7,17 +8,11 @@ export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunct
     try{
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return sendResponse(res, 401, {
-                message: "API key missing.",
-                success: false
-            });
+            return sendErrorResponse(res, new Error("Please provide a valid API key"), 401, "API key missing");
         }
         const key = authHeader.split(" ")[1];
         if (!key.startsWith("sk-oneapi-")) {
-            return sendResponse(res, 401, {
-                message: "Invalid API key format",
-                success: false
-            });
+            return sendErrorResponse(res, new Error("Please provide a valid API key"), 401, "Invalid API key format");
         }
 
         // Find key in DB
@@ -28,10 +23,7 @@ export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunct
         });
 
         if (!apiKey) {
-            return sendResponse(res, 401, {
-                message: "Invalid or revoked API key",
-                success: false
-            });
+            return sendErrorResponse(res, new Error("Please check your API key"), 401, "Invalid or revoked API key");
         }
 
         req.apiKey = apiKey.key;
@@ -39,10 +31,6 @@ export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunct
 
         next();
     }catch(error){
-        return sendResponse(res, 500, {
-            message: "API key validation failed",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
-        });
+        return sendErrorResponse(res, error, 500, "API key validation failed");
     }
 };

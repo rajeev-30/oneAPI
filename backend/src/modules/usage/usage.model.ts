@@ -1,4 +1,5 @@
 import { model, Types, Schema, Document } from "mongoose";
+import { request } from "node:http";
 
 interface IUsage extends Document {
   user: Types.ObjectId;
@@ -9,6 +10,7 @@ interface IUsage extends Document {
   modelBreakdown: Array<{
     model: Types.ObjectId;
     tokens: number;
+    requests: number;
     cost: number;
   }>;
 }
@@ -40,6 +42,10 @@ const usageSchema = new Schema<IUsage>({
       model: { 
         type: Schema.Types.ObjectId, 
         ref: "Model" 
+      },
+      requests: { 
+        type: Number, 
+        default: 0 
       },
       tokens: { 
         type: Number, 

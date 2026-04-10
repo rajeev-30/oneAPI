@@ -17,6 +17,18 @@ export const sendErrorResponse = (
     return res.status(error.statusCode).json(payload);
   }
 
+  if (error instanceof Error) {
+    const payload: ApiResponse = {
+      success: false,
+      message: fallbackMessage,
+      error: {
+        name: error.name,
+        message: error.message,
+      },
+    };
+    return res.status(fallbackStatus).json(payload);
+  }
+
   const payload: ApiResponse = {
     success: false,
     message: fallbackMessage,

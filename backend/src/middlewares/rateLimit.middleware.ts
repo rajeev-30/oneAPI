@@ -1,15 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { checkPlanLimits } from "@services/redisRateLimiter.service";
-import { sendResponse } from "@utils/response";
+import { sendErrorResponse } from "@utils/errorResponse";
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const subscription = req.subscription as any;
         if (!subscription) {
-            return sendResponse(res, 500, {
-                message: "Subscription context missing.",
-                success: false,
-            });
+            return sendErrorResponse(res, new Error("please provide subscription context"), 500, "Subscription context missing.");
         }
         if (req.billingSource === "wallet") {
             return next();
@@ -18,7 +15,7 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
         const plan = subscription.plan as any;
 
         const limits = {
-            requestsPerMinute: plan?.limits?.requestsPerMinute ?? 100,
+            requestsPerMinute: 1,
             tokensPerMinute: plan?.limits?.tokensPerMinute ?? 10000,
             requestsPerDay: plan?.limits?.requestsPerDay ?? 1000,
             tokensPerDay: plan?.limits?.tokensPerDay ?? 100000,
@@ -47,18 +44,11 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
                 return next();
             }
 
-            return sendResponse(res, 429, {
-                success: false,
-                message: result.reason + " Please upgrade your plan or purchase credits to continue."
-            });
+            return sendErrorResponse(res, new Error("Please upgrade your plan or purchase credits to continue."), 429, result.reason + " Please upgrade your plan or purchase credits to continue.");
         }
 
         return next();
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Rate limit check failed",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
-        });
+        return sendErrorResponse(res, error, 500, "Rate limit check failed");
     }
 };

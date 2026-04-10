@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Subscription from "@modules/subscription/subscription.model";
 import { sendResponse } from "@utils/response";
+import { sendErrorResponse } from "@utils/errorResponse";
 
 type BillingSource = "plan" | "wallet";
 
@@ -12,10 +13,7 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
         }).populate("plan").populate("wallet");
 
         if (!subscription) {
-            return sendResponse(res, 403, {
-                message: "Your credit balance is too low to access the oneAPI. Upgrade your plan or purchase credits.",
-                success: false,
-            });
+            return sendErrorResponse(res, new Error("Please upgrade your plan or purchase credits, To access the oneAPI."), 403, "Your credit balance is too low to access the oneAPI. Upgrade your plan or purchase credits.");
         }
 
         const plan = subscription.plan as any;
@@ -27,10 +25,7 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
 
         if (!hasActivePlan && !hasWalletBalance) {
             await Subscription.findByIdAndUpdate(subscription._id, { $set: { status: "expired" } });
-            return sendResponse(res, 403, {
-                message: "Your credit balance is too low to access the oneAPI. Upgrade your plan or purchase credits.",
-                success: false,
-            });
+            return sendErrorResponse(res, new Error("Please upgrade your plan or purchase credits, To access the oneAPI."), 403, "Your credit balance is too low to access the oneAPI. Upgrade your plan or purchase credits.");
         }
 
         const billingSource: BillingSource = hasActivePlan ? "plan" : "wallet";
@@ -39,10 +34,6 @@ export const subscriptionMiddleware = async (req: Request, res: Response, next: 
         req.billingSource = billingSource;
         next();
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Subscription check failed",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
-        });
+        return sendErrorResponse(res, error, 500, "Subscription check failed");
     }
 };

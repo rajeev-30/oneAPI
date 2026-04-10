@@ -2,8 +2,11 @@ import { Request, Response } from "express";
 import { routeToProvider } from "@services/providerRouter.service";
 import { recordActualUsage } from "@services/redisRateLimiter.service";
 import { sendResponse } from "@utils/response";
-import {settleBilling, updateUsage, updateApiKeyUsage, chatCompletionValidation, getModel} from "./gateway.service"
+import {chatCompletionValidation, getModel} from "./gateway.service"
 import { sendErrorResponse } from "@utils/errorResponse";
+import { updateUsage } from "@modules/usage/usage.service";
+import { updateApiKeyUsage } from "@modules/apiKey/apiKey.service";
+import { updateWallet } from "@modules/wallet/wallet.service";
 
 export const chatCompletion = async (req: Request, res: Response) => {
     try {
@@ -81,7 +84,7 @@ export const chatCompletion = async (req: Request, res: Response) => {
             //used await here to ensure billing is settled before next request comes in, 
             //which could cause issues with concurrent requests and wallet balance updates. 
             //We can optimize this later by using a queue or background job if needed.
-            await settleBilling(
+            await updateWallet(
                 req.userId as string,
                 req.billingSource as "plan" | "wallet" | undefined,
                 totalCost

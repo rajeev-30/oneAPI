@@ -113,3 +113,30 @@ export const deleteApiKeyService = async (userId: string, id: string) => {
 
   return apiKey;
 };
+
+
+export const updateApiKeyUsage = async (
+    apiKeyId: string,
+    apiKey: string,
+    userId: string,
+    totalTokensUsed: number,
+    totalSpent: number
+) => {
+    await ApiKey.findOneAndUpdate(
+        { _id: apiKeyId, user: userId, key: apiKey },
+        {
+            $inc: {
+                totalRequests: 1,
+                totalTokensUsed,
+                totalSpent
+            },
+            $set: {
+                lastUsedAt: new Date()
+            }
+        },
+    );
+
+    const redis = getRedisClient();
+    await redis.del(getApiKeyCacheKey(userId, apiKeyId));
+    await redis.del(getApiKeysCacheKey(userId));
+};

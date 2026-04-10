@@ -6,9 +6,6 @@ import { getRedisClient } from "@config/redis";
 
 const getSubscriptionCacheKey = (userId: string): string => `subscription:${userId}`;
 
-
-//Create post function for subscription and usage in service and call it whereever you need;
-
 export const createSubscriptionService = async (userId: string, body: unknown) => {
     const redis = getRedisClient();
     const cacheKey = getSubscriptionCacheKey(userId);
@@ -38,7 +35,7 @@ export const createSubscriptionService = async (userId: string, body: unknown) =
         { upsert: true, setDefaultsOnInsert: true, returnDocument: "after" }
     );
 
-    await redis.set(cacheKey, JSON.stringify(subscription));
+    await redis.del(cacheKey);
     return subscription;
 }
 

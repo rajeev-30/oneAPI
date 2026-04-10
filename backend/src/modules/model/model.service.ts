@@ -38,8 +38,7 @@ export const createModelService = async (body: any) => {
     await model.save();
     
     await redis.del(getModelsCacheKey());
-    const cacheKey = getModelCacheKey(model._id.toString());
-    await redis.set(cacheKey, JSON.stringify(model));
+    await redis.del(getModelCacheKey(model._id.toString()));
 
     return model;
 };
