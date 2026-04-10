@@ -1,39 +1,13 @@
 import { sendResponse } from "@utils/response";
-import User from "./user.model";
-import { comparePassword, generateAuthToken } from "./user.service";
-import { signupSchema, loginSchema } from "./user.validation";
-import bcrypt from "bcryptjs"
+import { generateAuthToken, getUserService, loginService, signupService, updateUserService } from "./user.service";
 import {Request, Response} from "express"
+import { sendErrorResponse } from "@utils/errorResponse";
 
 
 export const SignUp = async (req: Request, res: Response) => {
     try{
-        const result = signupSchema.safeParse(req.body);
-        
-        if(!result.success){
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false
-            });
-        }
-        
-        const { name, email, password } = result.data;
-
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return sendResponse(res, 409, {
-                message: "User already exists",
-                success: false
-            });
-        }
-
-        // Create new user
-        const hashedPass = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPass });
-        await newUser.save();
+        const newUser = await signupService(req.body);
         const token = generateAuthToken(newUser._id.toString());
-
 
         return res.status(201)
         .cookie('token', token, {
@@ -48,35 +22,14 @@ export const SignUp = async (req: Request, res: Response) => {
             data: newUser
         });
     }catch(error){
-        console.log("SignUp failed: " + error);
-        return sendResponse(res, 500, {
-            message: "SignUp failed due to server issue",
-            success: false,
-            error:error instanceof Error ? error.message : "Unknown error"
-        })
+        return sendErrorResponse(res, error, 500, "SignUp failed due to server issue")
     }
 }
 
 
 export const Login = async (req: Request, res: Response)=> {
     try{
-        const result = loginSchema.safeParse(req.body);
-        if(!result.success){
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false
-            });
-        }
-        const { email, password } = result.data;
-
-        // Validate user credentials
-        const user = await User.findOne({ email });
-        if (!user || !comparePassword(password, user.password)) {
-            return sendResponse(res, 401, {
-                message: "Invalid email or password",
-                success: false,
-            });
-        }
+        const user = await loginService(req.body);
 
         // Generate JWT token
         const token = generateAuthToken(user._id.toString());
@@ -94,16 +47,11 @@ export const Login = async (req: Request, res: Response)=> {
             data: user
         });
     }catch(error){
-        console.log("Login failed: " + error);
-        return sendResponse(res, 500, {
-            message: "Login failed due to server issue",
-            success: false,
-            error:error instanceof Error ? error.message : "Unknown error"
-        })
+        return sendErrorResponse(res, error, 500, "Login failed due to server issue")
     }
 }
 
-export const Logout  = async(_req: Request, res:Response) => {
+export const Logout  = async(_req: Request, res: Response) => {
     try{
         return res.status(200)
         .clearCookie("token", {
@@ -116,36 +64,36 @@ export const Logout  = async(_req: Request, res:Response) => {
             success: true
         })
     }catch(error){
-        console.log("Logout failed: " + error);
-        return sendResponse(res, 500, {
-            message: "Logout failed due to server issue",
-            success: false,
-            error:error instanceof Error ? error.message : "Unknown error"
-        })
+        return sendErrorResponse(res, error, 500, "Logout failed due to server issue")
     }
 }
 
-export const getUser = async(req:Request, res:Response) => {
+export const getUser = async(req: Request, res: Response) => {
     try{
-        const id = req.userId;
-        const user = await User.findById(id).select("-password");
-        if(!user){
-            return sendResponse(res, 404, {
-                message: "User not found",
-                success: false
-            });
-        }
+        const userId = req.userId as string;
+        const user = await getUserService(userId);
+
         return sendResponse(res, 200, {
             message: "User found successfully",
             success: true,
             data: user
         });
     }catch(error){
-        console.log("GetUser failed: " + error);
-        return sendResponse(res, 500, {
-            message: "GetUser failed due to server issue",
-            success: false,
-            error:error instanceof Error ? error.message : "Unknown error"
-        })
+        return sendErrorResponse(res, error, 500, "GetUser failed due to server issue")
+    }
+}
+
+export const updateUser = async(req: Request, res: Response) => {
+    try{
+        const userId = req.userId as string;
+        const updatedUser = await updateUserService(userId, req.body);
+
+        return sendResponse(res, 200, {
+            message: "User updated successfully",
+            success: true,
+            data: updatedUser
+        });
+    }catch(error){
+        return sendErrorResponse(res, error, 500, "UpdateUser failed due to server issue")
     }
 }
