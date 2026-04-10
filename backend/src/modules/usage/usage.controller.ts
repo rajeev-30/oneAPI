@@ -1,28 +1,13 @@
 import { Request, Response } from "express";
-import { usageSchema } from "./usage.validation";
-import Usage from "./usage.model";
 import { sendResponse } from "@utils/response";
+import { firstYearOfUsageService, getMonthlyUsageService } from "./usage.service";
+import { sendErrorResponse } from "@utils/errorResponse";
 
 
 export const getMonthlyUsage = async (req: Request, res: Response) => {
     try {
-        const result = usageSchema.safeParse(req.params);
-        if (!result.success) {
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false,
-            });
-        }
-        const { month } = result.data;
-        
-        const usage = await Usage.findOne({ user: req.userId, month });
-
-        if (!usage) {
-            return sendResponse(res, 404, {
-                message: "No usage data found for the specified month",
-                success: false,
-            });
-        }
+        const userId = req.userId as string;
+        const usage = await getMonthlyUsageService(userId, req.params)
 
         return sendResponse(res, 200, {
             message: "Usage data retrieved successfully",
@@ -30,38 +15,22 @@ export const getMonthlyUsage = async (req: Request, res: Response) => {
             data: usage,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error retrieving usage data",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error retrieving usage data");
     }
 }
 
 export const firstYearOfUsage = async (req: Request, res: Response) => {
     try {
-        const firstUsage = await Usage.findOne({ user: req.userId })
-        .sort({ month: 1 })
-        .select("month");
-
-        if (!firstUsage) {
-            return sendResponse(res, 404, {
-                message: "No usage data found",
-                success: false,
-            });
-        }
+        const userId = req.userId as string;
+        const firstUsage = await firstYearOfUsageService(userId);
 
         return sendResponse(res, 200, {
-            message: "First usage month retrieved successfully",
+            message: "First usage year and month retrieved successfully",
             success: true,
             data: firstUsage.month
             
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error retrieving usage data",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
+        return sendErrorResponse(res, error, 500, "Error retrieving usage data");
     }
 }
