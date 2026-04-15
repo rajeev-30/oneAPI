@@ -15,8 +15,6 @@ export async function* nvidiaChat({ model, messages, temperature, max_tokens }: 
     
     const modelName = model.slug;
     
-    //  separate system messages
-    // const systemMessage = messages.find((msg: any) => msg.role === "system")?.content;
     const chatMessages  = messages.map((msg: any) => ({
         role:    msg.role as "user" | "assistant" | "system",
         content: msg.content

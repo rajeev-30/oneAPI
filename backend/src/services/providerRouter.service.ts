@@ -21,7 +21,7 @@ interface RouteOptions {
     
 
 export async function* routeToProvider(options: RouteOptions): AsyncGenerator<ChatChunk> {
-    const providerSlug = (options.model.provider as any).slug;
+    const providerSlug: string = (options.model.provider as any).slug.toLowerCase();
 
     switch(providerSlug){
         case "anthropic":
