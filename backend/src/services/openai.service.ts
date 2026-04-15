@@ -1,12 +1,13 @@
 import OpenAI from "openai";
 import { ChatChunk } from "../types/types";
 import { costCalculator } from "@utils/costCalculator";
+import { AppError } from "../types/errors";
 
 
 export async function* openaiChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) throw new Error("OPENAI_API_KEY is not set in .env");
-    
+    if (!apiKey) throw new AppError("OPENAI_API_KEY is not found", 400, "NOT_FOUND", "OPENAI_API_KEY is not set in .env");
+
     const client = new OpenAI({
         apiKey,
     });

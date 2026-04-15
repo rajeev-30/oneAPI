@@ -40,6 +40,6 @@ export async function* routeToProvider(options: RouteOptions): AsyncGenerator<Ch
             yield* openaiChat(options);
             break;
         default:
-            throw new AppError(`'${providerSlug}' is not supported yet`, 400, "PROVIDER_NOT_SUPPORTED", "Please choose a different model");
+            throw new AppError(`'${providerSlug}' is not supported yet`, 400, "NOT_SUPPORTED", "Please choose a different model");
     }
 }

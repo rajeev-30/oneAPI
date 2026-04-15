@@ -1,3 +1,4 @@
+import { AppError } from "../types/errors";
 import Redis from "ioredis";
 
 let redisClient: Redis | null = null;
@@ -26,7 +27,7 @@ export const initRedis = async (): Promise<Redis> => {
 
 export const getRedisClient = (): Redis => {
     if (!redisClient) {
-        throw new Error("Redis client is not initialized.");
+        throw new AppError("Redis client is not initialized.", 500, "INTERNAL_SERVER_ERROR", "Redis client is not initialized.");
     }
     return redisClient;
 };

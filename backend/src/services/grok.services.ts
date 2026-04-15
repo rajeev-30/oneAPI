@@ -1,12 +1,13 @@
 import OpenAI from "openai";
 import { ChatChunk } from "../types/types";
 import { costCalculator } from "@utils/costCalculator";
+import { AppError } from "../types/errors";
 
 
 export async function* grokChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
     const apiKey = process.env.XAI_API_KEY;
-    if (!apiKey) throw new Error("GROK_API_KEY is not set in .env");
-    
+    if (!apiKey) throw new AppError("GROK_API_KEY is not found", 400, "NOT_FOUND", "GROK_API_KEY is not set in .env");
+
     const client = new OpenAI({
         apiKey,
         baseURL: "https://api.x.ai/v1", // xAI base URL

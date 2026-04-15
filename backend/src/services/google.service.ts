@@ -1,12 +1,13 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ChatChunk } from "../types/types";
 import { costCalculator } from "@utils/costCalculator";
+import { AppError } from "../types/errors";
 
 
 export async function* googleChat({ model, messages, temperature, max_tokens }: any): AsyncGenerator<ChatChunk> {
     
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("GEMINI_API_KEY is not set in .env");
+    if (!apiKey) throw new AppError("GEMINI_API_KEY is not found", 400, "NOT_FOUND", "GEMINI_API_KEY is not set in .env");
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
