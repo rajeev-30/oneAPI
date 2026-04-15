@@ -5,8 +5,8 @@ import { createModel, deleteModel, getModel, getModels, updateModel } from "./mo
 
 const router = Router();
 
-router.route("/").get(authMiddleware, adminMiddleware, getModels);
-router.route("/:id").get(authMiddleware, adminMiddleware, getModel);
+router.route("/").get(getModels);
+router.route("/:id").get(getModel);
 router.route("/").post(authMiddleware, adminMiddleware, createModel);
 router.route("/:id").patch(authMiddleware, adminMiddleware, updateModel);
 router.route("/:id").delete(authMiddleware, adminMiddleware, deleteModel);

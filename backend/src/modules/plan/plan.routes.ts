@@ -4,8 +4,8 @@ import { adminMiddleware, authMiddleware } from "@middlewares/auth.middleware";
 
 const router = Router();
 
-router.route("/").get(authMiddleware, adminMiddleware, getPlans);
-router.route("/:id").get(authMiddleware, adminMiddleware, getPlan);
+router.route("/").get(getPlans);
+router.route("/:id").get(getPlan);
 router.route("/").post(authMiddleware, adminMiddleware, createPlan);
 router.route("/:id").patch(authMiddleware, adminMiddleware, updatePlan);
 router.route("/:id").delete(authMiddleware, adminMiddleware, deletePlan);

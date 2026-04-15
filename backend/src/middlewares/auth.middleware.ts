@@ -10,7 +10,7 @@ export const authMiddleware = async(req: Request, res: Response, next: NextFunct
     const token = req.cookies?.token;
     if(!token){
         return res.status(401).json({
-            message: "Authentication required: Token missing",
+            message: "Authentication required: Auth Token missing",
             success: false,
             isLoginRequired: true,
         });
