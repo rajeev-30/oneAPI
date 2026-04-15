@@ -1,36 +1,13 @@
-import Subscription from "@modules/subscription/subscription.model";
-import Wallet from "./wallet.model";
-import { walletSchema } from "./wallet.validation";
 import { Request, Response } from "express";
 import { sendResponse } from "@utils/response";
+import { addBalanceService, getWalletService } from "./wallet.service";
+import { sendErrorResponse } from "@utils/errorResponse";
 
 
 export const addBalance = async (req: Request, res: Response) => {
     try {
-        const result = walletSchema.safeParse(req.body);
-        if (!result.success) {
-            return sendResponse(res, 400, {
-                message: result.error.issues[0].message,
-                success: false,
-            });
-        }
-
-        const { balance } = result.data;
-        const userId = req.userId;
-
-        let wallet = await Wallet.findOne({ user: userId });
-        if (!wallet) {
-            wallet = new Wallet({ user: userId, balance});
-        } else {
-            wallet.balance += balance;
-        }
-        await wallet.save();
-
-        await Subscription.findOneAndUpdate(
-            { user: userId },
-            { $set: { wallet: wallet._id, status: "active" } },
-            { upsert: true, setDefaultsOnInsert: true }
-        );
+        const userId = req.userId as string;
+        const wallet = await addBalanceService(userId, req.body);
 
         return sendResponse(res, 200, {
             message: "Balance added successfully",
@@ -38,25 +15,14 @@ export const addBalance = async (req: Request, res: Response) => {
             data: wallet,
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error adding balance",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
-        });
+        return sendErrorResponse(res, error, 500, "Error adding balance");
     }
 }
 
 export const getWallet = async (req: Request, res: Response) => {
     try {
-        const userId = req.userId;
-        const wallet = await Wallet.findOne({ user: userId });
-
-        if (!wallet) {
-            return sendResponse(res, 404, {
-                message: "Wallet not found",
-                success: false,
-            });
-        }
+        const userId = req.userId as string;
+        const wallet = await getWalletService(userId);
 
         return sendResponse(res, 200, {
             message: "Wallet retrieved successfully",
@@ -64,10 +30,6 @@ export const getWallet = async (req: Request, res: Response) => {
             data: wallet
         });
     } catch (error) {
-        return sendResponse(res, 500, {
-            message: "Error retrieving balance",
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error"
-        });
+        return sendErrorResponse(res, error, 500, "Error retrieving balance");
     }
 }

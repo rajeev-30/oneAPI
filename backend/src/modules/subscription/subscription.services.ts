@@ -4,7 +4,7 @@ import Plan from "@modules/plan/plan.model";
 import { AppError } from "../../types/errors";
 import { getRedisClient } from "@config/redis";
 
-const getSubscriptionCacheKey = (userId: string): string => `subscription:${userId}`;
+export const getSubscriptionCacheKey = (userId: string): string => `subscription:${userId}`;
 
 export const createSubscriptionService = async (userId: string, body: unknown) => {
     const redis = getRedisClient();

@@ -7,7 +7,7 @@ import { getRedisClient } from '@config/redis';
 
 const getUserCacheKey = (userId: string): string => `user:${userId}`;
 
-export const comparePassword = async (password: string, userPassword: string): Promise<boolean> => {
+const comparePassword = async (password: string, userPassword: string): Promise<boolean> => {
     return await bcrypt.compare(password, userPassword);
 }
 
