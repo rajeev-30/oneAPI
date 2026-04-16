@@ -2,11 +2,9 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-// import compression from "compression";
 import cookieParser from "cookie-parser";
 
 import routes from "./routes/v1.routes";
-// import errorMiddleware from "./middlewares/error.middleware.ts";
 
 const app = express();
 
@@ -34,8 +32,5 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/v1", routes);
-
-// Global error handler
-// app.use(errorMiddleware);
 
 export default app;

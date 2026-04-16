@@ -7,7 +7,7 @@ import { initRedis, closeRedis } from "./config/redis";
 import { startSubscriptionExpiryCron } from "./jobs/expireSubscription.job";
 
 
-const PORT = process.env.PORT || 9000;
+const PORT = process.env.PORT || 8000;
 
 async function startServer() {
   try {
