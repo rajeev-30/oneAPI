@@ -1,8 +1,6 @@
 import ApiKey from "@modules/apiKey/apiKey.model";
 import { sendErrorResponse } from "@utils/errorResponse";
-import { sendResponse } from "@utils/response";
 import {Request, Response, NextFunction} from "express"
-import { send } from "node:process";
 
 export const apiKeyMiddleware = async (req:Request, res:Response, next:NextFunction) => {
     try{
