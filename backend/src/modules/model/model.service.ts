@@ -4,9 +4,11 @@ import Billing from "@modules/billing/billing.model";
 import { AppError } from "../../types/errors";
 import { getRedisClient } from "@config/redis";
 import { modelSchema } from "./model.validation";
+import { paginateQuery, paginationSchema } from "@utils/pagination";
 
 const getModelCacheKey = (modelId: string): string => `model:${modelId}`;
-const getModelsCacheKey = (): string => `models:all`;
+const getModelsCacheKey = (page: number, page_size: number | 'all'): string => `models:${page}:${page_size}`;
+const modelKeys: string = `model_keys`;
 
 export const createModelService = async (body: any) => {
     const redis = getRedisClient();
@@ -36,33 +38,44 @@ export const createModelService = async (body: any) => {
 
     const model = new Model(result.data);
     await model.save();
-    
-    await redis.del(getModelsCacheKey());
+
+    const keys = await redis.smembers(modelKeys);
+    if (keys.length > 0) {
+        await redis.del(...keys);
+    }
     await redis.del(getModelCacheKey(model._id.toString()));
 
     return model;
 };
 
-export const getModelsService = async () => {
+export const getModelsService = async (params: any) => {
     const redis = getRedisClient();
-    const cacheKey = getModelsCacheKey();
+
+    const result = paginationSchema.safeParse(params);
+    if (!result.success) {
+        throw new AppError(result.error.issues[0].message, 400, "VALIDATION_ERROR", result.error.issues);
+    }
+    const { page, page_size } = result.data;
+    const cacheKey = getModelsCacheKey(page, page_size);
 
     const cached = await redis.get(cacheKey);
     if (cached) {
         return JSON.parse(cached);
     }
 
-    const models = await Model.find()
+    const query = Model.find()
         .populate("provider")
         .populate("billing");
 
-    if (!models || models.length === 0) {
+    const res = await paginateQuery(query, page, page_size);
+
+    if (!res.data || res.data.length === 0) {
         throw new AppError("No models found", 404, "NOT_FOUND", "Please provide a valid model ID");
     }
 
-    await redis.set(cacheKey, JSON.stringify(models));
-
-    return models;
+    await redis.set(cacheKey, JSON.stringify(res));
+    await redis.sadd(modelKeys, cacheKey);
+    return res;
 };
 
 export const getModelService = async (modelId: string) => {
@@ -105,7 +118,10 @@ export const updateModelService = async (modelId: string, body: any) => {
         throw new AppError("Model not found", 404, "NOT_FOUND", "Please provide a valid model ID");
     }
 
-    await redis.del(getModelsCacheKey());
+    const keys = await redis.smembers(modelKeys);
+    if (keys.length > 0) {
+        await redis.del(...keys);
+    }
     await redis.set(cacheKey, JSON.stringify(model));
 
     return model;
@@ -120,7 +136,10 @@ export const deleteModelService = async (modelId: string) => {
         throw new AppError("Model not found", 404, "NOT_FOUND", "Please provide a valid model ID");
     }
 
-    await redis.del(getModelsCacheKey());
+    const keys = await redis.smembers(modelKeys);
+    if (keys.length > 0) {
+        await redis.del(...keys);
+    }
     await redis.del(getModelCacheKey(modelId));
 
     return model;

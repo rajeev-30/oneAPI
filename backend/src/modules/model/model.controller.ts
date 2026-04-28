@@ -20,17 +20,18 @@ export const createModel = async (req: Request, res: Response) => {
 
 export const getModels = async (req: Request, res: Response) => {
     try {
-        const models = await getModelsService();
-
+        const {data, pagination} = await getModelsService(req.query);
         return sendResponse(res, 200, {
             message: "Models fetched successfully",
             success: true,
-            data: models,
+            data,
+            pagination
         });
     } catch (error) {
         return sendErrorResponse(res, error, 500, "Error fetching models");
     }
 };
+
 
 export const getModel = async (req: Request, res: Response) => {
     try {

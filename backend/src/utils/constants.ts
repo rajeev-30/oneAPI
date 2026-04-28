@@ -1,0 +1,1 @@
+export const RECORDS_PER_PAGE: number = 10;
