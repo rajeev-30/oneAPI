@@ -40,12 +40,30 @@ export const chatCompletion = async (req: Request, res: Response) => {
             for await (const chunk of generator) {
                 if (chunk.done) {
                     usage = chunk.usage;
-                    res.write(`data: ${JSON.stringify({ usage: chunk.usage, done: true })}\n\n`);
-                    res.write(`data: ${JSON.stringify({ model: modelSlug })}\n\n`);
+
+                    // final structured response
+                    res.write(`data: ${JSON.stringify({
+                        message: "Response generated successfully",
+                        success: true,
+                        data: {
+                            choices: [{ message: { role: "assistant", content: null } }],
+                            usage,
+                            model: modelSlug,
+                            done: true
+                        }
+                    })}\n\n`);
+
                     res.write("data: [DONE]\n\n");
                     res.end();
                 } else {
-                    res.write(`data: ${JSON.stringify({ text: chunk.text })}\n\n`);
+                    // stream partial chunks in same structure
+                    res.write(`data: ${JSON.stringify({
+                        message: "Streaming...",
+                        success: true,
+                        data: {
+                            choices: [{ message: { role: "assistant", content: chunk.text } }]
+                        }
+                    })}\n\n`);
                 }
             }
         } else {

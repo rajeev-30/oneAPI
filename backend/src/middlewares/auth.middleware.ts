@@ -1,3 +1,4 @@
+import ApiKey from "@modules/apiKey/apiKey.model";
 import { sendErrorResponse } from "@utils/errorResponse";
 import {Request, Response, NextFunction} from "express"
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -50,4 +51,21 @@ export const adminMiddleware = (req: Request, res: Response, next: NextFunction)
     } else {
         return sendErrorResponse(res, new Error(), 403, "Forbidden: Admin access required");
     }
+}
+
+export const getUserIdByApiKeyMiddleware = async(req: Request, res: Response, next: NextFunction) => {
+    const apiKeyId = req.apiKeyId;
+
+    if (!apiKeyId) {
+        return sendErrorResponse(res, new Error("Please provide an API key"), 401, "Unauthorized: API key missing");
+    }
+
+    const apiKey = await ApiKey.findById({ _id: apiKeyId });
+
+    if (!apiKey) {
+        return sendErrorResponse(res, new Error("Please provide a valid API key"), 401, "Unauthorized: Invalid API key");
+    }
+
+    req.userId = apiKey.user.toString();
+    next();
 }
