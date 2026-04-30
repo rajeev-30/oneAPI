@@ -42,7 +42,7 @@ export const getPlansService = async () => {
 
     const plans = await Plan.find();
     if (!plans || plans.length === 0) {
-        throw new AppError("No plans found", 404, "NOT_FOUND", "Please provide a valid user ID");
+        throw new AppError("No plans found", 404, "NOT_FOUND", "Please add some plans");
     }
 
     await redis.set(cacheKey, JSON.stringify(plans));

@@ -43,7 +43,7 @@ export const getBillingsService = async () => {
 
   const billings = await Billing.find();
   if (!billings || billings.length === 0) {
-    throw new AppError("No billing records found", 404, "NOT_FOUND", "Please provide a valid user ID");
+    throw new AppError("No billing records found", 404, "NOT_FOUND", "Please add some billing records");
   }
 
   await redis.set(cacheKey, JSON.stringify(billings));

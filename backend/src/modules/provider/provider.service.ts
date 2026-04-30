@@ -58,7 +58,7 @@ export const getProvidersService = async () => {
 
     const providers = await Provider.find();
     if(!providers || providers.length === 0) {
-        throw new AppError("No providers found", 404, "NOT_FOUND", "Please provide a valid provider ID");
+        throw new AppError("No providers found", 404, "NOT_FOUND", "Please add some providers");
     }
 
     await redis.set(cacheKey, JSON.stringify(providers));

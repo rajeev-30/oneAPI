@@ -10,7 +10,7 @@ const getModelCacheKey = (modelId: string): string => `model:${modelId}`;
 const getModelsCacheKey = (page: number, page_size: number | 'all'): string => `models:${page}:${page_size}`;
 const modelKeys: string = `model_keys`;
 
-export const createModelService = async (body: any) => {
+export const createModelService = async (body: unknown) => {
     const redis = getRedisClient();
 
     const result = modelSchema.safeParse(body);
@@ -70,7 +70,7 @@ export const getModelsService = async (params: any) => {
     const res = await paginateQuery(query, page, page_size);
 
     if (!res.data || res.data.length === 0) {
-        throw new AppError("No models found", 404, "NOT_FOUND", "Please provide a valid model ID");
+        throw new AppError("No models found", 404, "NOT_FOUND", "Please add some models");
     }
 
     await redis.set(cacheKey, JSON.stringify(res));
@@ -101,7 +101,7 @@ export const getModelService = async (modelId: string) => {
 };
 
 
-export const updateModelService = async (modelId: string, body: any) => {
+export const updateModelService = async (modelId: string, body: unknown) => {
     const redis = getRedisClient();
     const cacheKey = getModelCacheKey(modelId);
 

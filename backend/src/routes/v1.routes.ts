@@ -9,6 +9,7 @@ import planRoute from "../modules/plan/plan.routes";
 import walletRoute from "../modules/wallet/wallet.routes";
 import usageRoute from "../modules/usage/usage.routes";
 import subscriptionRoute from "../modules/subscription/subscription.routes";
+import conversationRoute from "../modules/conversation/conversation.routes";
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use("/plan", planRoute);
 app.use("/wallet", walletRoute);
 app.use("/usage", usageRoute);
 app.use("/subscription", subscriptionRoute);
+app.use("/conversation", conversationRoute);
 
 export default app;

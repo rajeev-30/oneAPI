@@ -46,7 +46,7 @@ export const getApiKeysService = async (userId: string) => {
 
   const apiKeys = await ApiKey.find({ user: userId });
   if (!apiKeys || apiKeys.length === 0) {
-    throw new AppError("No API keys found", 404, "NOT_FOUND", "Please provide a valid user ID");
+    throw new AppError("No API keys found", 404, "NOT_FOUND", "Please generate an API key");
   }
 
   await redis.set(cacheKey, JSON.stringify(apiKeys));
