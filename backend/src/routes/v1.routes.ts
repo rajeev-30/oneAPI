@@ -10,6 +10,7 @@ import walletRoute from "../modules/wallet/wallet.routes";
 import usageRoute from "../modules/usage/usage.routes";
 import subscriptionRoute from "../modules/subscription/subscription.routes";
 import conversationRoute from "../modules/conversation/conversation.routes";
+import adminRoute from "../modules/admin/admin.routes";
 
 const app = express();
 
@@ -24,5 +25,6 @@ app.use("/wallet", walletRoute);
 app.use("/usage", usageRoute);
 app.use("/subscription", subscriptionRoute);
 app.use("/conversation", conversationRoute);
+app.use("/admin", adminRoute);
 
 export default app;
