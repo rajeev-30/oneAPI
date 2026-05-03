@@ -11,7 +11,14 @@ import { formatCurrency, formatTokens, formatNumber, formatMonth } from "@/lib/u
 import { BarChart3, TrendingUp, Coins, Activity, ChevronLeft, ChevronRight } from "lucide-react";
 
 function getCurrentMonth() { return new Date().toISOString().slice(0, 7); }
-function shiftMonth(m: string, d: number) { const [y, mo] = m.split("-").map(Number); return new Date(y, mo - 1 + d).toISOString().slice(0, 7); }
+// function shiftMonth(m: string, d: number) { const [y, mo] = m.split("-").map(Number); return new Date(y, mo - 1 + d).toISOString().slice(0, 7); }
+function shiftMonth(m: string, d: number) {
+  let [y, mo] = m.split("-").map(Number);
+  mo += d;
+  y += Math.floor((mo - 1) / 12);
+  mo = ((mo - 1) % 12 + 12) % 12 + 1;
+  return `${y}-${String(mo).padStart(2, "0")}`;
+}
 
 export default function UsagePage() {
   const searchParams = useSearchParams();

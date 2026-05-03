@@ -44,7 +44,7 @@ export const getApiKeysService = async (userId: string) => {
     return JSON.parse(cached);
   }
 
-  const apiKeys = await ApiKey.find({ user: userId });
+  const apiKeys = await ApiKey.find({ user: userId }).sort({ createdAt: -1 });
   if (!apiKeys || apiKeys.length === 0) {
     throw new AppError("No API keys found", 404, "NOT_FOUND", "Please generate an API key");
   }

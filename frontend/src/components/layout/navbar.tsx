@@ -47,7 +47,7 @@ export function Navbar() {
   return (
     <nav className="h-12 border-b border-border-primary bg-surface-primary/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-4 gap-4">
       {/* Logo */}
-      <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center gap-2 mr-2">
+      <Link href={"/"} className="flex items-center gap-2 mr-2">
         <div className="w-6 h-6 rounded-md bg-brand-500/20 flex items-center justify-center">
           <Zap size={13} className="text-brand-400" />
         </div>

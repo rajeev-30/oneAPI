@@ -54,10 +54,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
         <div className="h-screen flex flex-col bg-surface-primary overflow-hidden">
             <Navbar />
-            <div className="py-6 h-10 pl-65 w-full border-b border-border-secondary flex items-center px-3">
-                <ModelSelector />
-            </div>
-            {/* <ModelSelector /> */}
             <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
         </div>
     );
