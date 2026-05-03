@@ -14,15 +14,15 @@ const MAIN_NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/keys", label: "API Keys", icon: Key },
   { href: "/usage", label: "Usage", icon: BarChart3 },
-  { href: "/models", label: "Models", icon: Layers },
+  // { href: "/models", label: "Models", icon: Layers },
   { href: "/plans", label: "Plans", icon: ChevronRight },
 ];
 
 const ACCOUNT_NAV = [
   { href: "/billing", label: "Credits", icon: CreditCard },
-  { href: "/docs", label: "Documentation", icon: FileText },
+  // { href: "/docs", label: "Documentation", icon: FileText },
   { href: "/settings", label: "Settings", icon: Settings },
-  { href: "/chat", label: "Chat", icon: MessageSquare },
+  // { href: "/chat", label: "Chat", icon: MessageSquare },
 ];
 
 export function Sidebar() {
@@ -41,7 +41,7 @@ export function Sidebar() {
         className={cn(
           "flex flex-col border-r border-border-primary bg-surface-secondary transition-all duration-200 z-50",
           isMobile ? "fixed left-0 top-12 bottom-0 w-56" : "relative shrink-0",
-          !isMobile && (sidebarCollapsed ? "w-12" : "w-52"),
+          !isMobile && (sidebarCollapsed ? "w-14" : "w-65"),
         )}
       >
         <div className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
@@ -56,7 +56,7 @@ export function Sidebar() {
                   href={item.href}
                   title={sidebarCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition-colors",
+                    "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-[13px] transition-colors",
                     isActive ? "bg-white/[0.08] text-text-primary font-medium" : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]",
                     sidebarCollapsed && !isMobile && "justify-center px-0",
                   )}
@@ -82,7 +82,7 @@ export function Sidebar() {
                   href={item.href}
                   title={sidebarCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition-colors",
+                    "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-[13px] transition-colors",
                     isActive ? "bg-white/[0.08] text-text-primary font-medium" : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]",
                     sidebarCollapsed && !isMobile && "justify-center px-0",
                   )}

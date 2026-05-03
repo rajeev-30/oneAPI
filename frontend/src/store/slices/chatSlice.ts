@@ -14,7 +14,7 @@ const initialState: ChatState = {
   messages: [],
   isStreaming: false,
   streamingContent: "",
-  selectedModel: "gemini-1.5-flash",
+  selectedModel: "gemini-2.5-flash",
   activeConversationId: null,
   lastUsage: null,
 };

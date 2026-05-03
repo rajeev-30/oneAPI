@@ -12,9 +12,10 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 const NAV_LINKS = [
+  { href: "/dashboard", label: "home" },
+  { href: "/playground", label: "Playground" },
   { href: "/models", label: "Models" },
   { href: "/docs", label: "Docs" },
-  { href: "/chat", label: "Chat" },
 ];
 
 export function Navbar() {

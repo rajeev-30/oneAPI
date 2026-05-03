@@ -25,5 +25,5 @@ export function ModelSelector() {
     description: m.provider?.name,
   }));
 
-  return <Dropdown items={items} value={selectedModel} onChange={(v) => dispatch(setSelectedModel(v))} placeholder="Select model" className="w-52" />;
+  return <Dropdown items={items} value={selectedModel} onChange={(v) => dispatch(setSelectedModel(v))} placeholder="Select model" className="w-58" />;
 }
