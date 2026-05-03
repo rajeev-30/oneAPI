@@ -25,7 +25,7 @@ apiClient.interceptors.response.use(
         }
       }
     }
-    return Promise.reject(error);
+    return error.response ? Promise.reject(new Error(error.response.data?.message || "API Error")) : Promise.reject(new Error("Network Error"));
   }
 );
 

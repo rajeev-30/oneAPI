@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 // Logging
 if (process.env.NODE_ENV !== "test") {
-  app.use(morgan("combined"));
+  app.use(morgan("dev"));
 }
 
 // Body parsing

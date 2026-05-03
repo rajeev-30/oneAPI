@@ -36,7 +36,7 @@ export default function LoginPage() {
     try {
       const user = await login({ email, password });
       dispatch(setUser(user));
-      toast.success("Welcome back!");
+      toast.success("Welcome back, " + user.name + "!");
       router.push("/dashboard");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");

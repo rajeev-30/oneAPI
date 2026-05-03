@@ -7,7 +7,7 @@ export const paginateQuery = async (
 ) => {
     //Case: return all data
     if (pageSize === 'all') {
-        const data = await query.sort({ createdAt: -1 });
+        const data = await query.sort({ _id: -1 });
         const total = data.length;
 
     return {data, pagination: {
@@ -23,7 +23,7 @@ export const paginateQuery = async (
     const skip = (page - 1) * pageSize;
 
     const [data, total] = await Promise.all([
-        query.clone().skip(skip).limit(pageSize).sort({ createdAt: -1 }),
+        query.clone().skip(skip).limit(pageSize).sort({ _id: -1 }),
         query.model.countDocuments(query.getQuery())
     ]);
 

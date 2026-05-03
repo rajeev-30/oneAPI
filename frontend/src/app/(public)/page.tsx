@@ -17,7 +17,7 @@ export default function LandingPage() {
           </p>
           <div className="flex items-center justify-center gap-3 mt-8">
             <Link
-              href="/signup"
+              href="/keys"
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-brand-500 text-white font-medium text-sm hover:bg-brand-600 transition-colors shadow-lg shadow-brand-500/25"
             >
               Get API Key <ArrowRight size={16} />
@@ -101,7 +101,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border-secondary py-8 px-4 text-center">
-        <p className="text-xs text-text-muted">© 2026 oneAPI. Built for developers.</p>
+        <p className="text-sm text-text-muted">© 2026 oneAPI. Made with 💙 for developers.</p>
       </footer>
     </div>
   );
