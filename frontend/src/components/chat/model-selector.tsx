@@ -5,34 +5,22 @@ import { getModels } from "@/lib/api/models";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setSelectedModel } from "@/store/slices/chatSlice";
 import { useEffect, useRef, useState, useMemo } from "react";
-import { Search, X, ChevronDown, Zap, ExternalLink } from "lucide-react";
+import { Search, X, ChevronDown, Zap, Bot } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { PROVIDER_CONFIG } from "@/lib/utils/provider";
 
-// ─── Provider config ──────────────────────────────────────────────────────────
-const PROVIDERS: Record<string, { label: string; color: string; dot: string }> = {
-  all:       { label: "All",       color: "bg-[#3a3a3a] text-[#e0e0e0]", dot: "" },
-  openai:    { label: "OpenAI",    color: "bg-[#10a37f]/15 text-[#10a37f]", dot: "bg-[#10a37f]" },
-  anthropic: { label: "Anthropic", color: "bg-[#cc785c]/15 text-[#cc785c]", dot: "bg-[#cc785c]" },
-  google:    { label: "Google",    color: "bg-[#4285f4]/15 text-[#4285f4]", dot: "bg-[#4285f4]" },
-  meta:      { label: "Meta",      color: "bg-[#0668e1]/15 text-[#4a9eff]", dot: "bg-[#4a9eff]" },
-  mistral:   { label: "Mistral",   color: "bg-[#f7931e]/15 text-[#f7931e]", dot: "bg-[#f7931e]" },
-  groq:      { label: "Groq",      color: "bg-[#f55036]/15 text-[#f55036]", dot: "bg-[#f55036]" },
-  cohere:    { label: "Cohere",    color: "bg-[#39b5ac]/15 text-[#39b5ac]", dot: "bg-[#39b5ac]" },
-  xai:       { label: "xAI",       color: "bg-[#8b5cf6]/15 text-[#a78bfa]", dot: "bg-[#a78bfa]" },
-};
 
-const PROVIDER_DOT_FALLBACK = "bg-[#666]";
 
 function getProviderKey(slug: string): string {
   const lower = slug?.toLowerCase() ?? "";
-  for (const key of Object.keys(PROVIDERS)) {
+  for (const key of Object.keys(PROVIDER_CONFIG)) {
     if (key !== "all" && lower.includes(key)) return key;
   }
   return "other";
 }
 
-function getProviderDot(key: string): string {
-  return PROVIDERS[key]?.dot ?? PROVIDER_DOT_FALLBACK;
+function getProviderIcon(key: string): any {
+  return PROVIDER_CONFIG[key].icon ?? Bot;
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -124,7 +112,7 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
   const availableProviders = useMemo(() => {
     const keys = new Set<string>();
     models.forEach((m) => keys.add(getProviderKey(m.provider?.slug ?? "")));
-    return ["all", ...Array.from(keys).filter((k) => k !== "other" && PROVIDERS[k]).sort()];
+    return ["all", ...Array.from(keys).filter((k) => k !== "other" && PROVIDER_CONFIG[k]).sort()];
   }, [models]);
 
   // Filtered + grouped models
@@ -172,14 +160,10 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
         open && "bg-[#2a2a2a] border-[#333] text-white"
       )}
     >
-      {selectedModelData && (
-        <span
-          className={cn(
-            "inline-block w-2 h-2 rounded-full shrink-0",
-            getProviderDot(selectedProviderKey)
-          )}
-        />
-      )}
+      {selectedModelData && (() => {
+        const Icon = getProviderIcon(selectedProviderKey);
+        return <Icon size={16} />;
+      })()}
       <span className="max-w-[120px] truncate">
         {isLoading ? "Loading…" : selectedModelData?.name ?? "Select model"}
       </span>
@@ -223,7 +207,7 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                 className="flex-1 bg-transparent text-[13px] text-[#ddd] placeholder:text-[#444] outline-none"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="text-[#555] hover:text-[#aaa]">
+                <button onClick={() => setSearch("")} className="text-[#555] hover:text-[#aaa] cursor-pointer">
                   <X size={12} />
                 </button>
               )}
@@ -233,25 +217,25 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
           {/* Provider tabs */}
           <div className="flex gap-1.5 px-3 py-2 border-b border-[#222] overflow-x-auto scrollbar-none flex-wrap">
             {availableProviders.slice(0, 4).map((key) => {
-              const cfg = PROVIDERS[key] ?? { label: key, color: "bg-[#2a2a2a] text-[#888]", dot: PROVIDER_DOT_FALLBACK };
+              const Icon = getProviderIcon(key);
               const isActive = activeProvider === key;
               return (
                 <button
                   key={key}
                   onClick={() => setActiveProvider(key)}
                   className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium shrink-0",
+                    "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium shrink-0 cursor-pointer",
                     "transition-all duration-100",
                     isActive
-                      ? cfg.color
+                      ? "bg-[#4285f4]/15 text-[#4285f4]"
                       : "bg-transparent text-[#555] hover:text-[#999] hover:bg-[#1e1e1e]",
                     isActive && "ring-1 ring-inset ring-current/20"
                   )}
                 >
-                  {key !== "all" && cfg.dot && (
-                    <span className={cn("w-1.5 h-1.5 rounded-full", cfg.dot)} />
+                  {key !== "all" && Icon && (
+                    <Icon size={16} />
                   )}
-                  {cfg.label}
+                  {PROVIDER_CONFIG[key]?.label}
                 </button>
               );
             })}
@@ -274,7 +258,7 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                   </div>
                   {items.map((model) => {
                     const pKey = getProviderKey(model.provider?.slug ?? "");
-                    const dot = getProviderDot(pKey);
+                    const Icon = getProviderIcon(pKey);
                     const isSelected = model.slug === selectedModel;
                     const isHovered = model.slug === hoveredModel;
 
@@ -296,8 +280,8 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                         onMouseEnter={() => setHoveredModel(model.slug)}
                         onMouseLeave={() => setHoveredModel(null)}
                       >
-                        {/* Provider dot */}
-                        <span className={cn("w-2 h-2 rounded-full shrink-0 mt-0.5", dot)} />
+                        {/* Provider Icon */}
+                        <Icon size={16} />
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
@@ -314,7 +298,7 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                         </div>
 
                         {isSelected && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#cc785c] shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#4285f4] shrink-0" />
                         )}
                       </button>
                     );
@@ -337,15 +321,11 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                     "bg-[#1e1e1e] border border-[#2e2e2e]"
                   )}
                 >
-                  {detailModel.provider?.logo ? (
-                    <img
-                      src={detailModel.provider.logo}
-                      alt=""
-                      className="w-5 h-5 object-contain"
-                    />
-                  ) : (
-                    <span className="text-base">🤖</span>
-                  )}
+                  {(() => {
+                    const Icon = PROVIDER_CONFIG[detailModel.provider?.slug].icon;
+                    // You must return the result
+                    return Icon ? <Icon size={18} /> : <span className="text-base">🤖</span>;
+                  })()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-[14px] font-semibold text-white leading-tight truncate">
