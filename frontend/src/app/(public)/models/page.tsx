@@ -88,7 +88,7 @@ export default function PublicModelsPage() {
             return (
               <div
                 key={model._id}
-                className="group flex items-center gap-4 px-4 py-3 rounded-xl border border-border-primary hover:border-accent-blue hover:bg-surface-secondary transition-colors"
+                className="group flex items-center gap-4 px-4 py-3 rounded-xl border border-border-primary hover:border-accent-blue hover:bg-surface-tertiary transition-colors"
               >
                 <span className="text-lg">
                   {Icon ? <Icon size={18} /> : "🤖"}
