@@ -9,11 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils/format";
 import { Layers, Search, X, Copy, Check } from "lucide-react";
-import Link from "next/link";
 import { PROVIDER_CONFIG } from "@/lib/utils/provider";
 
 
-// const ICONS: Record<string, string> = { openai: "🟢", google: "🔵", anthropic: "🟠", groq: "⚡", nvidia: "🟩" };
 
 export default function PublicModelsPage() {
   const searchParams = useSearchParams();

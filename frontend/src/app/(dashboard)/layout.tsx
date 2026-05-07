@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUser, setLoading, clearAuth } from "@/store/slices/authSlice";
 import { setMobile } from "@/store/slices/uiSlice";
 import { getUser } from "@/lib/api/auth";
 import { Navbar } from "@/components/layout/navbar";
 import { Sidebar } from "@/components/layout/sidebar";
+import { toast } from "sonner";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
   const { user, isAuthenticated } = useAppSelector((s) => s.auth);
 
   // Auth guard
@@ -23,7 +25,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         dispatch(setUser(userData));
       } catch {
         dispatch(clearAuth());
-        router.push("/login");
+        router.push(`/login?redirect=${pathname}`);
       }
     };
     if (!user) verify();

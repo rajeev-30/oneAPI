@@ -30,7 +30,6 @@ function CodeBlock({ code, language = "javascript" }: CodeBlockProps) {
         className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-black/40 hover:bg-black/60 text-white transition cursor-pointer"
       >
         {copied ? <Check className="text-accent-emerald" size={14} /> : <Copy size={14} />}
-        {copied ? <span className="text-accent-emerald">Copied</span> : "Copy"}
       </button>
 
       {/* Code */}
@@ -61,7 +60,7 @@ export default function PublicDocsPage() {
 
       <Card>
         <div className="flex items-center gap-2 mb-4"><Zap size={16} className="text-brand-400" /><h2 className="text-base font-semibold text-text-primary">Quick Start</h2></div>
-        <ol className="list-decimal list-inside space-y-2 text-sm text-text-secondary">
+        <ol className="list-decimal list-inside space-y-2  text-text-secondary">
           <li><Link href="/signup" className="text-brand-400 hover:underline">Create an account</Link> and subscribe to a plan</li>
           <li>Generate an API key from your dashboard</li>
           <li>Make requests to <code className="bg-surface-elevated px-1.5 py-0.5 rounded text-accent-blue text-xs">POST http://localhost:8000/api/v1/chat/completions</code></li>
@@ -145,7 +144,7 @@ export default function PublicDocsPage() {
           </h2>
         </div>
 
-        <p className="text-sm text-text-secondary mb-4">
+        <p className="text-text-secondary mb-4">
           After calling the API, you can extract the AI-generated message from the response object.
           The content is available inside <code className="bg-surface-elevated px-1 py-0.5 rounded text-xs">data.data.choices[0].message.content</code>.
         </p>
@@ -170,8 +169,11 @@ console.log(message);`}
           <Badge>advanced</Badge>
         </div>
 
-        <p className="text-sm text-text-secondary mb-4">
-          You can guide the model by pre-filling part of the assistant response.
+        <p className="text-text-secondary mb-4">
+          oneAPI supports asking models to complete a partial response. This can be useful for guiding models to respond in a certain way.
+        </p>
+        <p className="text-text-secondary mb-4">
+          To use this features, simply include a message with <span className="text-brand-400 hover:underline" >role: "assistant"</span> at the end of your  <span className="text-brand-400 hover:underline" >messages</span> array.
         </p>
 
         <CodeBlock language="javascript"

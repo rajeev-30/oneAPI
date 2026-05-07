@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { login } from "@/lib/api/auth";
@@ -12,12 +12,15 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  const redirectUrl: string = searchParams.get("redirect") || "/dashboard";
 
   const validate = () => {
     const errs: typeof errors = {};
@@ -37,7 +40,7 @@ export default function LoginPage() {
       const user = await login({ email, password });
       dispatch(setUser(user));
       toast.success("Welcome back, " + user.name + "!");
-      router.push("/dashboard");
+      router.push(redirectUrl);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");
     } finally {
@@ -65,7 +68,7 @@ export default function LoginPage() {
         </form>
         <p className="text-sm text-text-muted text-center mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Sign up</Link>
+          <Link href={`/signup?redirect=${redirectUrl}`} className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Sign up</Link>
         </p>
       </div>
     </div>

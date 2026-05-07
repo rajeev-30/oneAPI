@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signup } from "@/lib/api/auth";
@@ -12,6 +12,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 export default function SignupPage() {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [name, setName] = useState("");
@@ -19,6 +20,8 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
+
+  const redirectUrl: string = searchParams.get("redirect") || "/dashboard";
 
   const validate = () => {
     const errs: typeof errors = {};
@@ -39,7 +42,7 @@ export default function SignupPage() {
       const user = await signup({ name, email, password });
       dispatch(setUser(user));
       toast.success("Account created!");
-      router.push("/dashboard");
+      router.push(redirectUrl);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Signup failed");
     } finally {
@@ -68,7 +71,7 @@ export default function SignupPage() {
         </form>
         <p className="text-sm text-text-muted text-center mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Sign in</Link>
+          <Link href={`/login?redirect=${redirectUrl}`} className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Sign in</Link>
         </p>
       </div>
     </div>

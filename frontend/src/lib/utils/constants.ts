@@ -10,3 +10,5 @@ export const DEFAULT_TEMPERATURE = 0.7;
 export const MAX_MESSAGE_LENGTH = 10000;
 
 export const RECORDS_PER_PAGE = 20;
+
+export const MINIMUM_TOPUP_AMOUNT = 5;

@@ -13,19 +13,34 @@ const apiClient = axios.create({
 
 // Response interceptor — unwrap and handle auth errors
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => response, // Pass through successful responses
   (error) => {
-    if (error.response?.status === 401) {
-      const data = error.response.data as ApiResponse & { isLoginRequired?: boolean };
-      // If server indicates login is required, redirect
-      if (data?.isLoginRequired) {
-        // Only redirect if we're in the browser and not already on auth pages
-        if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/signup")) {
-          window.location.href = "/login";
-        }
-      }
+    // Check if we received a response from the server
+    if (error.response) {
+      // const status = error.response.status;
+      const data = error.response.data as { message?: string; isLoginRequired?: boolean };
+
+      // // Optional: handle 401 and redirect to login if required
+      // if (status === 401 && data?.isLoginRequired) {
+      //   if (typeof window !== "undefined") {
+      //     const path = window.location.pathname;
+      //     if (!path.startsWith("/login") && !path.startsWith("/signup")) {
+      //       window.location.href = "/login";
+      //     }
+      //   }
+      // }
+
+      // Reject with server-provided message or a fallback
+      return Promise.reject(new Error(data?.message || "Something went wrong. Please try again later."));
     }
-    return error.response ? Promise.reject(new Error(error.response.data?.message || "API Error")) : Promise.reject(new Error("Network Error"));
+
+    // Handle network errors (no response received)
+    if (error.request) {
+      return Promise.reject(new Error("Network error: Please check your internet connection."));
+    }
+
+    // Other Axios errors (e.g., config/setup issues)
+    return Promise.reject(new Error(error.message || "An unknown error occurred."));
   }
 );
 
