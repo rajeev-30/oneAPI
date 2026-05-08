@@ -6,23 +6,19 @@ import { cn } from "@/lib/utils/cn";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleSidebar } from "@/store/slices/uiSlice";
 import {
-  LayoutDashboard, Key, BarChart3, Layers, CreditCard,
-  FileText, Settings, MessageSquare, PanelLeftClose, ChevronRight,
+  LayoutDashboard, Key, BarChart3, CreditCard, Settings, PanelLeftClose, ChevronRight,
 } from "lucide-react";
 
 const MAIN_NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/keys", label: "API Keys", icon: Key },
   { href: "/usage", label: "Usage", icon: BarChart3 },
-  // { href: "/models", label: "Models", icon: Layers },
   { href: "/plans", label: "Plans", icon: ChevronRight },
 ];
 
 const ACCOUNT_NAV = [
   { href: "/billing", label: "Credits", icon: CreditCard },
-  // { href: "/docs", label: "Documentation", icon: FileText },
   { href: "/settings", label: "Settings", icon: Settings },
-  // { href: "/chat", label: "Chat", icon: MessageSquare },
 ];
 
 export function Sidebar() {
@@ -56,12 +52,12 @@ export function Sidebar() {
                   href={item.href}
                   title={sidebarCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-[13px] transition-colors",
+                    "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-sm text-sm font-medium transition-colors",
                     isActive ? "bg-white/[0.08] text-text-primary font-medium" : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]",
                     sidebarCollapsed && !isMobile && "justify-center px-0",
                   )}
                 >
-                  <Icon size={15} className={cn(isActive && "text-brand-400", "shrink-0")} />
+                  <Icon size={16} className={cn(isActive && "text-brand-400", "shrink-0")} />
                   {(!sidebarCollapsed || isMobile) && <span>{item.label}</span>}
                 </Link>
               );
@@ -82,12 +78,12 @@ export function Sidebar() {
                   href={item.href}
                   title={sidebarCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-[13px] transition-colors",
+                    "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-sm font-medium transition-colors",
                     isActive ? "bg-white/[0.08] text-text-primary font-medium" : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]",
                     sidebarCollapsed && !isMobile && "justify-center px-0",
                   )}
                 >
-                  <Icon size={15} className={cn(isActive && "text-brand-400", "shrink-0")} />
+                  <Icon size={16} className={cn(isActive && "text-brand-400", "shrink-0")} />
                   {(!sidebarCollapsed || isMobile) && <span>{item.label}</span>}
                 </Link>
               );

@@ -83,8 +83,9 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
         <div className="flex items-center justify-between px-3 pb-3">
           {/* Left: attach */}
           <button
+            disabled={true}
             className={cn(
-              "flex items-center justify-center w-8 h-8 rounded-lg",
+              "flex items-center justify-center w-8 h-8 rounded-lg cursor-pointer cursor-not-allowed",
               "text-[#555] hover:text-[#aaa] hover:bg-[#2a2a2a]",
               "transition-all duration-150"
             )}
@@ -110,7 +111,7 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
                 "transition-all duration-150",
                 canSend
                   // ? "bg-[#cc785c] hover:bg-[#b8664a] text-white shadow-md hover:shadow-[#cc785c]/30"
-                  ? " bg-text-primary text-surface-primary hover:bg-text-secondary"
+                  ? "bg-text-primary text-surface-primary hover:bg-text-secondary cursor-pointer"
                   : "bg-[#2a2a2a] text-[#444] cursor-not-allowed"
               )}
             >

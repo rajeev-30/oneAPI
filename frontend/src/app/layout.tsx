@@ -27,13 +27,13 @@ export default function RootLayout({
           <QueryProvider>
             {children}
             <Toaster
-              position="top-right"
+              position="bottom-right"
               toastOptions={{
                 style: {
                   background: "var(--color-surface-elevated)",
                   border: "1px solid var(--color-border-primary)",
                   color: "var(--color-text-primary)",
-                  fontSize: "13px",
+                  fontSize: "15px",
                 },
               }}
             />

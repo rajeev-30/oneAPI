@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils/cn";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { clearAuth } from "@/store/slices/authSlice";
 import { logout as logoutApi } from "@/lib/api/auth";
-import { Zap, Search, LogOut, ChevronDown, User } from "lucide-react";
+import { Zap, Search, LogOut, ChevronDown, User, LayoutDashboard, CreditCard, Settings, BarChart3, ChevronUp } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 const NAV_LINKS = [
-  { href: "/dashboard", label: "home" },
+  { href: "/dashboard", label: "Home" },
   { href: "/playground", label: "Playground" },
   { href: "/models", label: "Models" },
   { href: "/docs", label: "Docs" },
@@ -40,18 +40,18 @@ export function Navbar() {
       dispatch(clearAuth());
       router.push("/login");
     } catch {
-      toast.error("Logout failed");
+      toast.error("Logout failed!");
     }
   };
 
   return (
-    <nav className="h-12 border-b border-border-primary bg-surface-primary/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-4 gap-4">
+    <nav className="h-14 border-b border-border-primary bg-surface-primary/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-4 gap-4">
       {/* Logo */}
       <Link href={"/"} className="flex items-center gap-2 mr-2">
         <div className="w-6 h-6 rounded-md bg-brand-500/20 flex items-center justify-center">
           <Zap size={13} className="text-brand-400" />
         </div>
-        <span className="text-sm font-bold gradient-text hidden sm:inline">oneAPI</span>
+        <span className="text-lg font-bold gradient-text hidden sm:inline">oneAPI</span>
       </Link>
 
       {/* Search */}
@@ -59,7 +59,7 @@ export function Navbar() {
         <div className="flex items-center gap-2 h-7 px-2.5 rounded-md bg-surface-secondary border border-border-secondary text-text-muted text-xs">
           <Search size={12} />
           <span>Search...</span>
-          <kbd className="ml-auto text-[10px] bg-surface-primary px-1 rounded">⌘K</kbd>
+          <kbd className="ml-auto text-[10px] bg-surface-primary px-1 rounded">⌘+K</kbd>
         </div>
       </div>
 
@@ -72,10 +72,11 @@ export function Navbar() {
             key={link.href}
             href={link.href}
             className={cn(
-              "px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
+              "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+              "text-text-secondary hover:text-text-primary hover:bg-white/[0.10]",
               pathname.startsWith(link.href)
-                ? "text-text-primary bg-white/[0.06]"
-                : "text-text-secondary hover:text-text-primary"
+                ? "text-text-primary"
+                : ""
             )}
           >
             {link.label}
@@ -85,36 +86,54 @@ export function Navbar() {
 
       {/* User */}
       {isAuthenticated ? (
-        <div ref={menuRef} className="relative">
+        <div
+          ref={menuRef}
+          onMouseEnter={() => setUserMenuOpen(true)}
+          onMouseLeave={() => setUserMenuOpen(false)}
+            className="relative after:absolute after:top-full after:right-0 after:w-full after:h-2 after:content-['']"
+        >
           <button
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs text-text-secondary hover:text-text-primary hover:bg-white/[0.04] transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-2 py-1.5 rounded-2xl text-sm font-black text-text-secondary hover:text-text-primary hover:bg-white/[0.06] transition-colors cursor-pointer"
           >
-            <div className="w-6 h-6 rounded-full bg-brand-500/20 flex items-center justify-center text-[10px] font-bold text-brand-400">
+            {/* <div className="w-6 h-6 rounded-full bg-brand-500/20 flex items-center justify-center text-xs font-black text-brand-400">
+              {user?.name?.charAt(0).toUpperCase() || "U"}
+            </div> */}
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#1a73e8] to-[#1246a8] flex items-center justify-center text-white font-bold text-xs shrink-0 ">
               {user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <span className="hidden sm:inline">{user?.name || "Account"}</span>
-            <ChevronDown size={12} />
+            {
+              userMenuOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />
+            }
           </button>
           {userMenuOpen && (
-            <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border-primary bg-surface-secondary shadow-xl animate-slide-down py-1 z-50">
-              <div className="px-3 py-2 border-b border-border-secondary">
-                <p className="text-xs font-medium text-text-primary truncate">{user?.name}</p>
-                <p className="text-[10px] text-text-muted truncate">{user?.email}</p>
+            <div className="absolute right-0 top-[calc(100%+8px)] w-58 rounded-lg border border-border-primary bg-surface-secondary shadow-xl animate-slide-down py-1 z-50">
+              <div className="px-4 py-2 border-b border-border-secondary">
+                <p className="text-base font-medium text-text-primary truncate">{user?.name}</p>
+                <p className="text-sm text-text-muted truncate">{user?.email}</p>
               </div>
-              <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-white/[0.04]">
-                <User size={12} /> Settings
+              <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <Settings size={16} /> Settings
               </Link>
-              <button onClick={handleLogout} className="flex items-center gap-2 w-full px-3 py-1.5 text-xs text-accent-rose hover:bg-accent-rose/10 cursor-pointer">
-                <LogOut size={12} /> Sign out
+              <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <LayoutDashboard size={16} /> Dashboard
+              </Link>
+              <Link href="/usage" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <BarChart3 size={16} /> Usage
+              </Link>
+              <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <CreditCard size={16} /> Credit
+              </Link>
+              <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-2 text-sm text-accent-rose hover:bg-accent-rose/10 cursor-pointer">
+                <LogOut size={16} /> Sign out
               </button>
             </div>
           )}
         </div>
       ) : (
         <div className="flex items-center gap-2">
-          <Link href="/login" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Sign in</Link>
-          <Link href="/signup" className="text-xs px-3 py-1.5 rounded-md bg-brand-500 text-white hover:bg-brand-600 transition-colors font-medium">Sign up</Link>
+          <Link href="/login" className="text-sm px-3 py-2 rounded-md font-medium text-text-secondary hover:text-text-primary hover:bg-white/[0.10] transition-colors">Sign in</Link>
+          <Link href="/signup" className="text-sm font-medium px-3 py-2 rounded-md bg-brand-500 text-white hover:bg-brand-600 transition-colors font-medium">Sign up</Link>
         </div>
       )}
     </nav>

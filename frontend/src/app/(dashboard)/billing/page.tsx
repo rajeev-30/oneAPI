@@ -36,7 +36,7 @@ export default function BillingPage() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6 animate-fade-in">
-      <div><h1 className="text-2xl font-semibold text-text-primary">Credits</h1><p className="text-sm text-text-muted">Manage your wallet and billing</p></div>
+      <div><h1 className="text-3xl font-semibold text-text-primary">Credits</h1><p className="text-sm text-text-muted">Manage your wallet and billing</p></div>
 
       {wLoad ? <Skeleton className="h-40 rounded-xl" /> : (
         <Card className="bg-gradient-to-br from-brand-900/50 to-brand-800/30 border-brand-700/30">
