@@ -3,7 +3,8 @@
 import { useAppSelector } from "@/store/hooks";
 import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { ChatMessage } from "./chat-message";
-import { Zap } from "lucide-react";
+import Image from "next/image";
+import icon from '../../app/icon.png';
 
 export function ChatMessages() {
   const { messages, isStreaming, streamingContent } = useAppSelector((s) => s.chat);
@@ -12,11 +13,16 @@ export function ChatMessages() {
   if (messages.length === 0 && !isStreaming) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center px-4 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center mb-5">
-          <Zap size={24} className="text-brand-400" />
-        </div>
+          <Image
+            src={icon}
+            alt="Company Logo - oneAPI"
+            width={50}
+            height={50}
+            priority
+            className="mb-5"
+          />
         <h2 className="text-lg font-semibold text-text-primary mb-1">Chat Playground</h2>
-        <p className="text-text-muted text-sm max-w-sm">Test any model with streaming responses. Select a model above and start chatting.</p>
+        <p className="text-text-muted text-sm max-w-sm">Test any model with streaming responses. Select a model below and start chatting.</p>
       </div>
     );
   }

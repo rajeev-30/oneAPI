@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
 
     // Handle network errors (no response received)
     if (error.request) {
-      return Promise.reject(new Error("Network error: Please check your internet connection."));
+      return Promise.reject(new Error("Network error: Check your internet connection."));
     }
 
     // Other Axios errors (e.g., config/setup issues)

@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { signup } from "@/lib/api/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/authSlice";
-import { Zap, Mail, Lock, UserIcon } from "lucide-react";
+import { Mail, Lock, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import Image from "next/image";
+import icon from '../../icon.png';
 
 export default function SignupPage() {
   const searchParams = useSearchParams();
@@ -53,9 +55,13 @@ export default function SignupPage() {
   return (
     <div className="relative z-10 w-full max-w-sm animate-slide-up">
       <div className="flex items-center gap-2 justify-center mb-8">
-        <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">
-          <Zap size={20} className="text-brand-400" />
-        </div>
+        <Image
+          src={icon}
+          alt="Company Logo - oneAPI"
+          width={30}
+          height={30}
+          priority
+        />
         <span className="text-xl font-bold gradient-text">oneAPI</span>
       </div>
       <div className="rounded-2xl border border-border-primary bg-surface-secondary p-6 shadow-2xl">

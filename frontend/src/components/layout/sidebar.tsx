@@ -25,18 +25,21 @@ export function Sidebar() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { sidebarCollapsed, isMobile } = useAppSelector((s) => s.ui);
+  const handleNavClick = () => {
+    if (isMobile) dispatch(toggleSidebar());
+  };
 
   if (isMobile && sidebarCollapsed) return null;
 
   return (
     <>
       {isMobile && !sidebarCollapsed && (
-        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => dispatch(toggleSidebar())} />
+        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-xs" onClick={() => dispatch(toggleSidebar())} />
       )}
       <aside
         className={cn(
           "flex flex-col border-r border-border-primary bg-surface-secondary transition-all duration-200 z-50",
-          isMobile ? "fixed left-0 top-12 bottom-0 w-56" : "relative shrink-0",
+          isMobile ? "fixed left-0 top-14 bottom-0 w-70" : "relative shrink-0",
           !isMobile && (sidebarCollapsed ? "w-14" : "w-65"),
         )}
       >
@@ -51,6 +54,7 @@ export function Sidebar() {
                   key={item.href}
                   href={item.href}
                   title={sidebarCollapsed ? item.label : undefined}
+                  onClick={handleNavClick}
                   className={cn(
                     "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-sm text-sm font-medium transition-colors",
                     isActive ? "bg-white/[0.08] text-text-primary font-medium" : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]",
@@ -77,6 +81,7 @@ export function Sidebar() {
                   key={item.href}
                   href={item.href}
                   title={sidebarCollapsed ? item.label : undefined}
+                  onClick={handleNavClick}
                   className={cn(
                     "flex items-center gap-2.5 px-2.5 py-2 my-2 rounded-md text-sm font-medium transition-colors",
                     isActive ? "bg-white/[0.08] text-text-primary font-medium" : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]",

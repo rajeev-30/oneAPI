@@ -4,12 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { toggleSidebar } from "@/store/slices/uiSlice";
 import { clearAuth } from "@/store/slices/authSlice";
 import { logout as logoutApi } from "@/lib/api/auth";
-import { Zap, Search, LogOut, ChevronDown, User, LayoutDashboard, CreditCard, Settings, BarChart3, ChevronUp } from "lucide-react";
+import { LogOut, ChevronDown, LayoutDashboard, CreditCard, Settings, BarChart3, ChevronUp, PanelLeftOpen } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { HiMenuAlt4 } from "react-icons/hi";
+import { RxCross2 } from "react-icons/rx";
+import icon from '../../app/icon.png';
+import Image from "next/image";
+
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Home" },
@@ -18,13 +24,17 @@ const NAV_LINKS = [
   { href: "/docs", label: "Docs" },
 ];
 
+const PUBLIC_PATH_PREFIXES = ["/login", "/signup", "/docs"];
+
 export function Navbar() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { user, isAuthenticated } = useAppSelector((s) => s.auth);
+  const { isMobile, sidebarCollapsed } = useAppSelector((s) => s.ui);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const isPublicRoute = pathname === "/" || PUBLIC_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -45,13 +55,28 @@ export function Navbar() {
   };
 
   return (
-    <nav className="h-14 border-b border-border-primary bg-surface-primary/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-4 gap-4">
+    <nav className="h-14 border-b border-border-primary bg-surface-primary/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-4 md:px-8 gap-4">
+      {/* Mobile sidebar toggle */}
+      {isMobile && !isPublicRoute && (
+        <button
+          onClick={() => dispatch(toggleSidebar())}
+          aria-label="Toggle sidebar"
+          className="p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-white/[0.06] transition-colors"
+        >
+          {sidebarCollapsed ? <HiMenuAlt4 size={20} /> : <RxCross2 size={20} />}
+        </button>
+      )}
+
       {/* Logo */}
       <Link href={"/"} className="flex items-center gap-2 mr-2">
-        <div className="w-6 h-6 rounded-md bg-brand-500/20 flex items-center justify-center">
-          <Zap size={13} className="text-brand-400" />
-        </div>
-        <span className="text-lg font-bold gradient-text">oneAPI</span>
+          <Image
+            src={icon}
+            alt="Company Logo - oneAPI"
+            width={25}      
+            height={25}     
+            priority         
+          />
+        <span className="font-medium gwradient-text">oneAPI</span>
       </Link>
 
       {/* Search */}
