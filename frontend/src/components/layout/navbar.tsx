@@ -51,17 +51,17 @@ export function Navbar() {
         <div className="w-6 h-6 rounded-md bg-brand-500/20 flex items-center justify-center">
           <Zap size={13} className="text-brand-400" />
         </div>
-        <span className="text-lg font-bold gradient-text hidden sm:inline">oneAPI</span>
+        <span className="text-lg font-bold gradient-text">oneAPI</span>
       </Link>
 
       {/* Search */}
-      <div className="flex-1 max-w-xs">
+      {/* <div className="flex-1 max-w-xs">
         <div className="flex items-center gap-2 h-7 px-2.5 rounded-md bg-surface-secondary border border-border-secondary text-text-muted text-xs">
           <Search size={12} />
           <span>Search...</span>
           <kbd className="ml-auto text-[10px] bg-surface-primary px-1 rounded">⌘+K</kbd>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex-1" />
 
@@ -93,6 +93,7 @@ export function Navbar() {
             className="relative after:absolute after:top-full after:right-0 after:w-full after:h-2 after:content-['']"
         >
           <button
+            onClick={() => setUserMenuOpen((prev) => !prev)}
             className="flex items-center gap-2 px-2 py-1.5 rounded-2xl text-sm font-black text-text-secondary hover:text-text-primary hover:bg-white/[0.06] transition-colors cursor-pointer"
           >
             {/* <div className="w-6 h-6 rounded-full bg-brand-500/20 flex items-center justify-center text-xs font-black text-brand-400">
