@@ -33,7 +33,7 @@ export default function RootLayout({
                   background: "var(--color-surface-elevated)",
                   border: "1px solid var(--color-border-primary)",
                   color: "var(--color-text-primary)",
-                  fontSize: "15px",
+                  fontSize: "14px",
                 },
               }}
             />

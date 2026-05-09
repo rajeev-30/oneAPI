@@ -19,6 +19,12 @@ export const addBalanceService = async (userId: string, body: unknown) => {
 
     const { balance } = result.data;
 
+    //Will remove this once the payment method is implemented
+    const currentBalance = await Wallet.findOne({ user: userId }).select("balance");
+    if (currentBalance && currentBalance.balance > 100) {
+        throw new AppError("You cannot add more than 100 to your wallet.", 400, "LIMIT_EXCEEDED", "Currently we only allow a maximum balance of 100, Until we have a payment system in place.");
+    }
+
     const wallet = await Wallet.findOneAndUpdate(
         { user: userId },
         { $inc: { balance } },

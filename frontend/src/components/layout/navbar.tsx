@@ -102,9 +102,12 @@ export function Navbar() {
               {user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <span className="hidden sm:inline">{user?.name || "Account"}</span>
-            {
-              userMenuOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />
-            }
+            <ChevronDown
+              size={14}
+              className={`transition-transform duration-200 ${
+                userMenuOpen ? "rotate-180" : "rotate-0"
+              }`}
+            />
           </button>
           {userMenuOpen && (
             <div className="absolute right-0 top-[calc(100%+8px)] w-58 rounded-lg border border-border-primary bg-surface-secondary shadow-xl animate-slide-down py-1 z-50">
@@ -112,11 +115,11 @@ export function Navbar() {
                 <p className="text-base font-medium text-text-primary truncate">{user?.name}</p>
                 <p className="text-sm text-text-muted truncate">{user?.email}</p>
               </div>
-              <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
-                <Settings size={16} /> Settings
-              </Link>
               <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <LayoutDashboard size={16} /> Dashboard
+              </Link>
+              <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <Settings size={16} /> Settings
               </Link>
               <Link href="/usage" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <BarChart3 size={16} /> Usage
