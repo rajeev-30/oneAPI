@@ -7,8 +7,6 @@ import { setUser, setLoading, clearAuth } from "@/store/slices/authSlice";
 import { setMobile } from "@/store/slices/uiSlice";
 import { getUser } from "@/lib/api/auth";
 import { Navbar } from "@/components/layout/navbar";
-import { Sidebar } from "@/components/layout/sidebar";
-import { ModelSelector } from "@/components/chat/model-selector";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();

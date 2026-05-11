@@ -7,7 +7,6 @@ import { createConversationService, deleteConversationService, getConversationSe
 export const createConversation = async (req: Request, res: Response) => {
     try {
         const userId = req.userId as string;
-        console.log("Creating conversation for user:", userId);
         const conversation = await createConversationService(userId, req.body);
 
         return sendResponse(res, 201, {

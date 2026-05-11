@@ -42,7 +42,7 @@ export default function LoginPage() {
       const user = await login({ email, password });
       dispatch(setUser(user));
       toast.success("Welcome back, " + user.name + "!");
-      router.push(redirectUrl);
+      router.replace(redirectUrl);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");
     } finally {

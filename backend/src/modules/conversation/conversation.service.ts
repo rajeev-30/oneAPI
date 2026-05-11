@@ -35,7 +35,6 @@ export const getConversationService = async (userId: string, conversationId: str
     const cached = await redis.get(cacheKey);
 
     if (cached) {
-        console.log("Cache hit for conversation:", conversationId);
         return JSON.parse(cached);
     }
 
@@ -61,7 +60,6 @@ export const getConversationsTitlesService = async (userId: string, params: any)
 
     const cached = await redis.get(cacheKey);
     if (cached) {
-        console.log("Cache hit for conversations titles for user:", userId);
         return JSON.parse(cached);
     }
 

@@ -44,7 +44,7 @@ export default function SignupPage() {
       const user = await signup({ name, email, password });
       dispatch(setUser(user));
       toast.success("Account created!");
-      router.push(redirectUrl);
+      router.replace(redirectUrl);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Signup failed");
     } finally {

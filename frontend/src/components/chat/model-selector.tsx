@@ -8,8 +8,8 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { Search, X, ChevronDown, Zap, Bot } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { PROVIDER_CONFIG } from "@/lib/utils/provider";
-
-
+import Image from "next/image";
+import icon from '../../app/icon.png';
 
 function getProviderKey(slug: string): string {
   const lower = slug?.toLowerCase() ?? "";
@@ -71,6 +71,7 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
   const [search, setSearch] = useState("");
   const [activeProvider, setActiveProvider] = useState("all");
   const [hoveredModel, setHoveredModel] = useState<string | null>(null);
+  const { isMobile } = useAppSelector((s) => s.ui);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -80,6 +81,26 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
     queryFn: () => getModels(1, "all"),
     staleTime: 5 * 60 * 1000,
   });
+
+
+  // 1. Load the saved model on initial mount only
+  useEffect(() => {
+    const saved = localStorage.getItem('selectedModel');
+    if (saved) {
+      try {
+        dispatch(setSelectedModel(JSON.parse(saved)));
+      } catch (e) {
+        console.error("Failed to parse localstorage:", e);
+      }
+    }
+  }, []);
+
+  // 2. Save the model whenever it changes
+  useEffect(() => {
+    if (selectedModel) {
+      localStorage.setItem('selectedModel', JSON.stringify(selectedModel));
+    }
+  }, [selectedModel]);
 
   const models = data?.data || [];
 
@@ -179,9 +200,10 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
     <div
       className={cn(
         "absolute z-50 bottom-full mb-2",
-        standalone ? "left-0" : "right-0"
+        standalone ? "left-0" : "right-0",
+        isMobile ? "pl-4" : ""
       )}
-      style={{ width: "680px" }}
+      style={{ width: isMobile ? "360px" : "680px" }}
     >
       {/* Backdrop blur card */}
       <div
@@ -194,7 +216,12 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
         style={{ height: "420px" }}
       >
         {/* ── Left panel: search + list ── */}
-        <div className="flex flex-col w-[340px] shrink-0 border-r border-[#222]">
+        <div
+          className={cn(
+            "flex flex-col shrink-0",
+            isMobile ? "w-full border-r-0" : "w-[340px] border-r border-[#222]"
+          )}
+        >
           {/* Search */}
           <div className="p-3 border-b border-[#222]">
             <div className="flex items-center gap-2 bg-[#1e1e1e] border border-[#2e2e2e] rounded-xl px-3 py-2">
@@ -310,97 +337,104 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
         </div>
 
         {/* ── Right panel: model detail ── */}
-        <div className="flex-1 flex flex-col p-5 overflow-y-auto">
-          {detailModel ? (
-            <>
-              {/* Header */}
-              <div className="flex items-start gap-3 mb-4">
-                <div
-                  className={cn(
-                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-lg",
-                    "bg-[#1e1e1e] border border-[#2e2e2e]"
-                  )}
-                >
-                  {(() => {
-                    const Icon = PROVIDER_CONFIG[detailModel.provider?.slug].icon;
-                    // You must return the result
-                    return Icon ? <Icon size={18} /> : <span className="text-base">🤖</span>;
-                  })()}
+        {!isMobile && (
+          <div className="flex-1 flex flex-col p-5 overflow-y-auto">
+            {detailModel ? (
+              <>
+                {/* Header */}
+                <div className="flex items-start gap-3 mb-4">
+                  <div
+                    className={cn(
+                      "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-lg",
+                      "bg-[#1e1e1e] border border-[#2e2e2e]"
+                    )}
+                  >
+                    {(() => {
+                      const Icon = PROVIDER_CONFIG[detailModel.provider?.slug].icon;
+                      // You must return the result
+                      return Icon ? <Icon size={18} /> : <span className="text-base">🤖</span>;
+                    })()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[14px] font-semibold text-white leading-tight truncate">
+                      {detailModel.name}
+                    </h3>
+                    <p className="text-[12px] text-[#555] mt-0.5">{detailModel.provider?.name}</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[14px] font-semibold text-white leading-tight truncate">
-                    {detailModel.name}
-                  </h3>
-                  <p className="text-[12px] text-[#555] mt-0.5">{detailModel.provider?.name}</p>
+
+                {/* Description */}
+                {detailModel.description && (
+                  <p className="text-[12.5px] text-[#777] leading-relaxed mb-5 line-clamp-4">
+                    {detailModel.description}
+                  </p>
+                )}
+
+                {/* Stats */}
+                <div className="mt-auto border border-[#222] rounded-xl overflow-hidden">
+                  <div className="bg-[#1a1a1a] px-4 py-1">
+                    <StatRow
+                      label="Context"
+                      value={
+                        detailModel.context_length
+                          ? `${(detailModel.context_length / 1000).toFixed(0)}K tokens`
+                          : "—"
+                      }
+                    />
+                    <StatRow
+                      label="Input"
+                      value={
+                        detailModel.billing?.inputCostPer1KTokens
+                          ? `₹${(Number(detailModel.billing.inputCostPer1KTokens)).toFixed(2)} / K`
+                          : "Free"
+                      }
+                    />
+                    <StatRow
+                      label="Output"
+                      value={
+                        detailModel.billing?.outputCostPer1KTokens
+                          ? `₹${(Number(detailModel.billing.outputCostPer1KTokens)).toFixed(2)} / K`
+                          : "Free"
+                      }
+                    />
+                    {typeof detailModel.uptime === "number" && (
+                      <div className="flex items-center justify-between py-2.5">
+                        <span className="text-xs text-[#666] font-medium tracking-wide uppercase">
+                          Uptime
+                        </span>
+                        <UptimeBar value={detailModel.uptime} />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Description */}
-              {detailModel.description && (
-                <p className="text-[12.5px] text-[#777] leading-relaxed mb-5 line-clamp-4">
-                  {detailModel.description}
-                </p>
-              )}
-
-              {/* Stats */}
-              <div className="mt-auto border border-[#222] rounded-xl overflow-hidden">
-                <div className="bg-[#1a1a1a] px-4 py-1">
-                  <StatRow
-                    label="Context"
-                    value={
-                      detailModel.context_length
-                        ? `${(detailModel.context_length / 1000).toFixed(0)}K tokens`
-                        : "—"
-                    }
-                  />
-                  <StatRow
-                    label="Input"
-                    value={
-                      detailModel.billing?.inputCostPer1KTokens
-                        ? `₹${(Number(detailModel.billing.inputCostPer1KTokens)).toFixed(2)} / K`
-                        : "Free"
-                    }
-                  />
-                  <StatRow
-                    label="Output"
-                    value={
-                      detailModel.billing?.outputCostPer1KTokens
-                        ? `₹${(Number(detailModel.billing.outputCostPer1KTokens)).toFixed(2)} / K`
-                        : "Free"
-                    }
-                  />
-                  {typeof detailModel.uptime === "number" && (
-                    <div className="flex items-center justify-between py-2.5">
-                      <span className="text-xs text-[#666] font-medium tracking-wide uppercase">
-                        Uptime
+                {/* Capabilities */}
+                {detailModel.capabilities?.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {detailModel.capabilities.map((cap: string) => (
+                      <span
+                        key={cap}
+                        className="text-[10px] font-medium px-2 py-1 rounded-md bg-[#1e1e1e] border border-[#2a2a2a] text-[#666]"
+                      >
+                        {cap}
                       </span>
-                      <UptimeBar value={detailModel.uptime} />
-                    </div>
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full gap-2">
+                <Image
+                  src={icon}
+                  alt="Company Logo - oneAPI"
+                  width={40}
+                  height={40}
+                />
+                <p className="text-xs text-text-secondary">Hover a model to preview.</p>
               </div>
-
-              {/* Capabilities */}
-              {detailModel.capabilities?.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {detailModel.capabilities.map((cap: string) => (
-                    <span
-                      key={cap}
-                      className="text-[10px] font-medium px-2 py-1 rounded-md bg-[#1e1e1e] border border-[#2a2a2a] text-[#666]"
-                    >
-                      {cap}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-[#333] gap-2">
-              <Zap size={24} />
-              <p className="text-xs">Hover a model to preview</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

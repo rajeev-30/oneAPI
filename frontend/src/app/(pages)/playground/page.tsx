@@ -76,10 +76,33 @@ export default function ChatPage() {
         }
     }, [apiKey, messages, selectedModel, activeConversationId, send, dispatch, router, qc]);
 
+    if (keysLoading && !apiKey) return (
+        <div className="flex-1 h-full pt-6 flex flex-col items-center justify-center text-center px-6">
+            <div className="w-full max-w-sm space-y-4">
+                <div className="flex justify-center">
+                    <Skeleton className="w-12 h-12 rounded-full" />
+                </div>
+                <div className="space-y-2">
+                    <Skeleton className="h-5 w-40 mx-auto" />
+                    {/* <Skeleton className="h-4 w-64 mx-auto" /> */}
+                    <Skeleton className="h-4 w-75 mx-auto" />
+                </div>
+                <div className="flex justify-center pt-2">
+                    <Skeleton className="h-9 w-36 rounded-lg" />
+                </div>
+                <div className="flex justify-center gap-2 pt-2">
+                    <Skeleton className="h-2.5 w-2.5 rounded-full" />
+                    <Skeleton className="h-2.5 w-2.5 rounded-full" />
+                    <Skeleton className="h-2.5 w-2.5 rounded-full" />
+                </div>
+            </div>
+        </div>
+    );
+
     if (!keysLoading && !apiKey) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-                <AlertCircle size={28} className="text-accent-amber mb-3" />
+            <div className="flex-1 h-full flex flex-col items-center justify-center text-center">
+                <AlertCircle size={35} className="text-accent-amber mb-3" />
                 <h2 className="text-lg font-semibold text-text-primary mb-2">API Key Required</h2>
                 <p className="text-sm text-text-muted max-w-sm mb-4">Generate an API key to use the chat playground.</p>
                 <Link href="/keys" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 transition-colors"><Key size={16} /> Generate Key</Link>
@@ -94,21 +117,21 @@ export default function ChatPage() {
                 <div className="p-2 border-b border-border-secondary">
                     <button onClick={handleNewChat} className="flex items-center gap-2 w-full px-2 py-2 rounded-md text-xs font-medium text-text-primary bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/20 transition-colors cursor-pointer"><Plus size={14} /> New Chat</button>
                 </div>
-                <div className="flex-1 overflow-y-auto p-2.5 space-y-0.5">
+                <div className="flex-1 overflow-y-auto p-2.5 space-y-0.5  ">
                     {convTitles?.data?.map((c) => (
                         <div
                             key={c._id}
                             className={cn(
-                                "group flex items-center gap-1.5 w-full px-2 py-1.5 rounded-md text-[14px] transition-colors",
+                                "group flex items-center gap-1.5 w-full px-2 py-1.5 rounded-md text-[14px] transition-colors cursor-pointer",
                                 convId === c._id
-                                    ? "bg-white/[0.08] text-text-primary"
-                                    : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]"
+                                    ? " text-text-primary"
+                                    : "text-text-secondary hover:text-text-primary hover:bg-white/[0.08]"
                             )}
                         >
                             <button
                                 type="button"
                                 onClick={() => handleSelectConv(c._id)}
-                                className="flex flex-1 min-w-0 items-center gap-1.5 text-left"
+                                className="flex flex-1 min-w-0 items-center gap-1.5 text-left cursor-pointer"
                             >
                                 <MessageSquare size={12} className="shrink-0 opacity-50" />
                                 <span className="flex-1 truncate">{c.title}</span>
@@ -120,7 +143,7 @@ export default function ChatPage() {
                                 className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-rose/10 hover:text-accent-rose transition-all cursor-pointer"
                                 aria-label="Delete conversation"
                             >
-                                <Trash2 size={10} />
+                                <Trash2 size={12} />
                             </button>
                         </div>
                     ))}
@@ -128,9 +151,19 @@ export default function ChatPage() {
             </div>
                 
             {/* Chat area */}
-            <div className="w-full flex-1 flex flex-col min-h-0">
+            <div className="max-w-3xl mx-auto flex-1 flex flex-col min-h-0 pt-10">
                 {convLoading ? (
-                    <div className="flex-1 p-4 space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="flex gap-3"><Skeleton className="w-7 h-7 rounded-lg" /><div className="flex-1 space-y-2"><Skeleton className="h-3 w-20" /><Skeleton className="h-3 w-full" /></div></div>)}</div>
+                    <div className="flex-1 p-4 space-y-4">
+                        {[...Array(8)].map((_, i) => 
+                            <div key={i} className="flex gap-5">
+                                <Skeleton className="w-7 h-7 rounded-lg" />
+                                <div className="flex-1 space-y-2">
+                                    <Skeleton className="h-5 w-20" />
+                                    <Skeleton className="h-5 w-full" />
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 ) : (
                     <ChatMessages />
                 )}

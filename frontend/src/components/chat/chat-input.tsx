@@ -1,11 +1,12 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/store/hooks";
 // import { sendMessage } from "@/store/slices/chatSlice";
-import { Paperclip, ArrowUp, ChevronDown, Square } from "lucide-react";
+import { Paperclip, ArrowUp, Square } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { ModelSelector } from "@/components/chat/model-selector";
+import { toast } from "sonner";
 
 interface ChatInputProps {
   onSend: (content: string) => void;
@@ -17,6 +18,7 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isStreaming = useAppSelector((s) => s.chat.isStreaming);
+  const { selectedModel } = useAppSelector((s) => s.chat);
 
   // Auto-resize textarea
   const resize = useCallback(() => {
@@ -34,6 +36,10 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
 
   const handleSend = useCallback(() => {
     if (!canSend || disabled) return;
+    if (!selectedModel) {
+      toast.error("Please select a model first.");
+      return;
+    }
     onSend(value.trim());
     setValue("");
     if (textareaRef.current) {
