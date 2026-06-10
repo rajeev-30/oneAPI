@@ -36,7 +36,7 @@ export default function UsagePage() {
   const maxCost = useMemo(() => !usage?.modelBreakdown?.length ? 1 : Math.max(...usage.modelBreakdown.map((m) => m.cost)), [usage]);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6 animate-fade-in">
+    <div className="p-4 max-w-4xl mx-auto space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-text-primary">Activity</h1>

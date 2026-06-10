@@ -29,18 +29,20 @@ export function Sidebar() {
     if (isMobile) dispatch(toggleSidebar());
   };
 
-  if (isMobile && sidebarCollapsed) return null;
+  // if (isMobile && sidebarCollapsed) return null;
 
   return (
     <>
       {isMobile && !sidebarCollapsed && (
-        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-xs" onClick={() => dispatch(toggleSidebar())} />
+        <div className="fixed inset-0 z-40 bg-black/10 backdrop-blur-xs" onClick={() => dispatch(toggleSidebar())} />
       )}
       <aside
         className={cn(
-          "flex flex-col border-r border-border-primary bg-surface-secondary transition-all duration-200 z-50",
+          "flex flex-col border-r border-border-primary bg-surface-secondary transition-all duration-200 z-40",
           isMobile ? "fixed left-0 top-14 bottom-0 w-70" : "relative shrink-0",
-          !isMobile && (sidebarCollapsed ? "w-14" : "w-65"),
+          isMobile 
+            ? (sidebarCollapsed ? "-translate-x-full w-70 opacity-0" : "translate-x-0 w-70 opacity-100")
+            : (sidebarCollapsed ? "w-14" : "w-65")
         )}
       >
         <div className="flex-1 overflow-y-auto py-3 px-2 space-y-4">

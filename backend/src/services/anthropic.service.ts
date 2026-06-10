@@ -49,7 +49,6 @@ export async function* anthropicChat({ model, messages, temperature, max_tokens 
 
     const totalCost = costCalculator(promptTokens, completionTokens, model);
     
-
     yield {
         done:  true,
         usage: {

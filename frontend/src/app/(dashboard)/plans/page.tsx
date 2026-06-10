@@ -25,7 +25,7 @@ export default function PlansPage() {
   const currentPlanId = sub?.plan?._id;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6 animate-fade-in">
+    <div className="p-4 max-w-4xl mx-auto space-y-6 animate-fade-in">
       <div>
         <h1 className="text-lg font-semibold text-text-primary">Plans</h1>
         <p className="text-sm text-text-muted">Choose a plan that fits your needs</p>

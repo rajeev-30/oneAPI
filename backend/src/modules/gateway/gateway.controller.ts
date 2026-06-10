@@ -124,7 +124,17 @@ export const chatCompletion = async (req: Request, res: Response) => {
             totalCost
         );
 
-    } catch (error) {
+    } catch (error: any) {
+        if (res.headersSent) {
+            // Stream has already started, send error as an event and close it
+            res.write(`data: ${JSON.stringify({
+                success: false,
+                message: "Please try again later or use different model"
+            })}\n\n`);
+            res.write("data: [DONE]\n\n");
+            return res.end();
+        }
+
         return sendErrorResponse(res, error, 500, "Please try again later or use different model");
     }
 };

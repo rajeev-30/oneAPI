@@ -107,7 +107,7 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
 
             {/* Send button */}
             {isStreaming ? (
-            <button onClick={onStop} className="flex-shrink-0 p-2 rounded-lg bg-text-primary text-surface-primary hover:bg-text-secondary transition-colors cursor-pointer"><Square size={16} fill="currentColor" /></button>
+            <button onClick={onStop} className="flex-shrink-0 p-2 rounded-lg bg-text-primary text-surface-primary hover:bg-text-secondary transition-colors cursor-pointer"><Square size={14} fill="currentColor" /></button>
           ) : (
             <button
               onClick={handleSend}

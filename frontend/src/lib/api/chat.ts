@@ -61,18 +61,24 @@ export async function streamChatCompletion(
             return;
           }
 
+          let parsed;
           try {
-            const parsed: StreamChunk = JSON.parse(data);
-            if (parsed.data?.done) {
-              onDone(parsed.data.usage);
-            } else {
-              const content = parsed.data?.choices?.[0]?.message?.content;
-              if (content) {
-                onChunk(content);
-              }
-            }
+            parsed = JSON.parse(data);
           } catch {
-            // Skip malformed JSON chunks
+            continue; // Skip malformed JSON chunks
+          }
+
+          if (parsed.success === false) {
+            throw new Error(parsed.message || "An error occurred during streaming");
+          }
+
+          if (parsed.data?.done) {
+            onDone(parsed.data.usage);
+          } else {
+            const content = parsed.data?.choices?.[0]?.message?.content;
+            if (content) {
+              onChunk(content);
+            }
           }
         }
       }

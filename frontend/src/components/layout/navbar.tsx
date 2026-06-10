@@ -7,7 +7,8 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleSidebar } from "@/store/slices/uiSlice";
 import { clearAuth } from "@/store/slices/authSlice";
 import { logout as logoutApi } from "@/lib/api/auth";
-import { LogOut, ChevronDown, LayoutDashboard, CreditCard, Settings, BarChart3 } from "lucide-react";
+import { LogOut, ChevronDown, LayoutDashboard, CreditCard, Settings, BarChart3, Box, MessageSquare } from "lucide-react";
+import { IoBookOutline } from "react-icons/io5";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -195,7 +196,7 @@ export function Navbar() {
         <button
           onClick={() => dispatch(toggleSidebar())}
           aria-label="Toggle sidebar"
-          className="p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-white/[0.06] transition-colors"
+          className="p-2 text-text-secondary"
         >
           {sidebarCollapsed ? <HiMenuAlt4 size={20} /> : <RxCross2 size={20} />}
         </button>
@@ -263,6 +264,18 @@ export function Navbar() {
               <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <LayoutDashboard size={16} /> Dashboard
               </Link>
+              <Link href="/models" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <Box size={17} />  Models
+              </Link>
+              <Link href="/playground" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <MessageSquare size={16} />  Playground
+              </Link>
+              <Link href="/docs" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <IoBookOutline size={16} /> Docs
+              </Link>
+
+              <div className="px-4 border-b border-border-primary"></div>
+
               <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <Settings size={16} /> Settings
               </Link>
