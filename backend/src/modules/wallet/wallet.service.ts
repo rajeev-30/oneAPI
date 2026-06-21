@@ -90,7 +90,7 @@ export const updateWallet = async (
                     }
                 }
             ],
-            { returnDocument: "after" }
+            { returnDocument: "after", updatePipeline: true }
         );
         await redis.set(cacheKey, JSON.stringify(wallet));
         return wallet;

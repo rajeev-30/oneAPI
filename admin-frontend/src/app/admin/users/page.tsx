@@ -4,7 +4,13 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUsers, toggleUserStatus } from "@/lib/api/admin";
 import type { User, PaginationInfo } from "@/types";
-import { Users as UsersIcon, ShieldCheck, ShieldOff, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Users as UsersIcon,
+  ShieldCheck,
+  ShieldOff,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export default function UsersPage() {
@@ -21,8 +27,12 @@ export default function UsersPage() {
   const pagination: PaginationInfo | undefined = data?.pagination;
 
   const toggleMut = useMutation({
-    mutationFn: ({ id, active }: { id: string; active: boolean }) => toggleUserStatus(id, { isActive: active }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["users"] }); toast.success("User status updated"); },
+    mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+      toggleUserStatus(id, { isActive: active }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["users"] });
+      toast.success("User status updated");
+    },
     onError: (e) => toast.error(e.message),
   });
 
@@ -31,14 +41,25 @@ export default function UsersPage() {
       <div>
         <h1 className="text-lg font-semibold">Users</h1>
         <p className="text-sm text-text-muted">
-          {pagination ? `${pagination.total_items} total users` : "Manage platform users"}
+          {pagination
+            ? `${pagination.total_items} total users`
+            : "Manage platform users"}
         </p>
       </div>
 
       {isLoading ? (
-        <div className="space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-14 rounded-xl bg-bg-card border border-border-primary animate-pulse" />)}</div>
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="h-14 rounded-xl bg-bg-card border border-border-primary animate-pulse"
+            />
+          ))}
+        </div>
       ) : !users.length ? (
-        <div className="text-center py-16 text-text-muted text-sm">No users found.</div>
+        <div className="text-center py-16 text-text-muted text-sm">
+          No users found.
+        </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-border-primary bg-bg-card">
           <table className="w-full text-sm">
@@ -53,7 +74,9 @@ export default function UsersPage() {
             </thead>
             <tbody>
               {users.map((u) => (
-                <tr key={u._id} className="border-b border-border-primary/50 hover:bg-white/[0.02] group">
+                <tr
+                  key={u._id}
+                  className="border-b border-border-primary/50 hover:bg-white/[0.02] group">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
                       <div className="w-7 h-7 rounded-full bg-brand-500/20 flex items-center justify-center text-xs font-bold text-brand-400">
@@ -62,22 +85,40 @@ export default function UsersPage() {
                       <span className="font-medium">{u.name}</span>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-text-secondary text-xs">{u.email}</td>
+                  <td className="py-3 px-4 text-text-secondary text-xs">
+                    {u.email}
+                  </td>
                   <td className="py-3 px-4 text-text-muted text-xs">
-                    {new Date(u.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                    {new Date(u.createdAt).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </td>
                   <td className="py-3 px-4">
-                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${u.isActive ? "bg-accent-emerald/10 text-accent-emerald" : "bg-accent-rose/10 text-accent-rose"}`}>
+                    <span
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${u.isActive ? "bg-accent-emerald/10 text-accent-emerald" : "bg-accent-rose/10 text-accent-rose"}`}>
                       {u.isActive ? "Active" : "Banned"}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-right">
                     <button
-                      onClick={() => toggleMut.mutate({ id: u._id, active: !u.isActive })}
+                      onClick={() =>
+                        toggleMut.mutate({ id: u._id, active: !u.isActive })
+                      }
                       disabled={toggleMut.isPending}
-                      className="flex items-center gap-1 ml-auto px-2 py-1 rounded text-[11px] text-text-muted hover:text-text-primary hover:bg-white/[0.04] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                    >
-                      {u.isActive ? <><ShieldOff size={11} />Ban</> : <><ShieldCheck size={11} />Activate</>}
+                      className="flex items-center gap-1 ml-auto px-2 py-1 rounded text-[11px] text-text-muted hover:text-text-primary hover:bg-white/[0.04] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                      {u.isActive ? (
+                        <>
+                          <ShieldOff size={11} />
+                          Ban
+                        </>
+                      ) : (
+                        <>
+                          <ShieldCheck size={11} />
+                          Activate
+                        </>
+                      )}
                     </button>
                   </td>
                 </tr>
@@ -94,8 +135,20 @@ export default function UsersPage() {
             Page {pagination.current_page} of {pagination.last_page}
           </p>
           <div className="flex items-center gap-1">
-            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="p-1.5 rounded-lg border border-border-primary text-text-muted hover:text-text-primary disabled:opacity-30 cursor-pointer"><ChevronLeft size={14} /></button>
-            <button onClick={() => setPage(p => Math.min(pagination.last_page, p + 1))} disabled={page >= pagination.last_page} className="p-1.5 rounded-lg border border-border-primary text-text-muted hover:text-text-primary disabled:opacity-30 cursor-pointer"><ChevronRight size={14} /></button>
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="p-1.5 rounded-lg border border-border-primary text-text-muted hover:text-text-primary disabled:opacity-30 cursor-pointer">
+              <ChevronLeft size={14} />
+            </button>
+            <button
+              onClick={() =>
+                setPage((p) => Math.min(pagination.last_page, p + 1))
+              }
+              disabled={page >= pagination.last_page}
+              className="p-1.5 rounded-lg border border-border-primary text-text-muted hover:text-text-primary disabled:opacity-30 cursor-pointer">
+              <ChevronRight size={14} />
+            </button>
           </div>
         </div>
       )}

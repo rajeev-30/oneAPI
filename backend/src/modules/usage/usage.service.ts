@@ -68,6 +68,7 @@ export const updateUsage = async (
     cost: number,
 ) => {
     const month = new Date().toISOString().slice(0, 7); // "2026-03"
+    console.log(`Updating usage for user ${userId}, model ${modelId}, tokens ${totalTokens}, cost ${cost}`);
 
     // Step 1: Try updating existing model
     const result = await Usage.updateOne(

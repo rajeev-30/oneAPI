@@ -55,6 +55,7 @@ export const chatCompletion = async (req: Request, res: Response) => {
 
                     res.write("data: [DONE]\n\n");
                     res.end();
+                    break;
                 } else {
                     // stream partial chunks in same structure
                     res.write(`data: ${JSON.stringify({
@@ -125,7 +126,7 @@ export const chatCompletion = async (req: Request, res: Response) => {
         );
 
     } catch (error: any) {
-        if (res.headersSent) {
+        if (res.headersSent && !res.writableEnded && !res.destroyed) {
             // Stream has already started, send error as an event and close it
             res.write(`data: ${JSON.stringify({
                 success: false,
@@ -135,8 +136,10 @@ export const chatCompletion = async (req: Request, res: Response) => {
             return res.end();
         }
 
+        if (res.writableEnded || res.destroyed) {
+            return console.error("Response already sent, cannot send error response:", error);
+        }
+
         return sendErrorResponse(res, error, 500, "Please try again later or use different model");
     }
 };
-
-

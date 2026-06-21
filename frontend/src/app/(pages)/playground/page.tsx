@@ -196,10 +196,10 @@ export default function ChatPage() {
             </div>
 
             {/* Chat area */}
-            <div className="max-w-4xl mx-auto flex-1 flex flex-col min-h-0">
+            <div className="max-w-3xl mx-auto flex-1 flex flex-col min-h-0">
                 {convLoading ? (
                     <div className="flex-1 p-4 space-y-4">
-                        {[...Array(8)].map((_, i) =>
+                        {[...Array(5)].map((_, i) =>
                             <div key={i} className="flex gap-5">
                                 <Skeleton className="w-7 h-7 rounded-lg" />
                                 <div className="flex-1 space-y-2">
