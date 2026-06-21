@@ -18,7 +18,7 @@ export async function getUser(): Promise<User> {
 }
 
 export async function updateUser(
-  data: Partial<Pick<User, "name" | "email">>
+  data: Partial<Pick<User, "name" | "email">>,
 ): Promise<User> {
   return extractData<User>(await apiClient.patch("/user", data));
 }

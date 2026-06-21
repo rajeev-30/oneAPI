@@ -3,7 +3,12 @@
 import { useCallback, useRef, useState } from "react";
 import { streamChatCompletion } from "@/lib/api/chat";
 import { useAppDispatch } from "@/store/hooks";
-import { setStreaming, appendStreamContent, finalizeStream, addMessage } from "@/store/slices/chatSlice";
+import {
+  setStreaming,
+  appendStreamContent,
+  finalizeStream,
+  addMessage,
+} from "@/store/slices/chatSlice";
 import type { ChatCompletionRequest, ChatCompletionUsage } from "@/types";
 
 export function useChatStream() {
@@ -33,10 +38,10 @@ export function useChatStream() {
           setError(err.message);
           dispatch(setStreaming(false));
         },
-        abortRef.current.signal
+        abortRef.current.signal,
       );
     },
-    [dispatch]
+    [dispatch],
   );
 
   const abort = useCallback(() => {

@@ -7,14 +7,23 @@ import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { toggleSidebar } from "@/store/slices/uiSlice";
 import { clearAuth } from "@/store/slices/authSlice";
 import { logout as logoutApi } from "@/lib/api/auth";
-import { LogOut, ChevronDown, LayoutDashboard, CreditCard, Settings, BarChart3, Box, MessageSquare } from "lucide-react";
+import {
+  LogOut,
+  ChevronDown,
+  LayoutDashboard,
+  CreditCard,
+  Settings,
+  BarChart3,
+  Box,
+  MessageSquare,
+} from "lucide-react";
 import { IoBookOutline } from "react-icons/io5";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { HiMenuAlt4 } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
-import icon from '../../app/icon.png';
+import icon from "../../app/icon.png";
 import Image from "next/image";
 
 const NAV_LINKS = [
@@ -36,7 +45,9 @@ export function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const hasMounted = useRef(false);
-  const isPublicRoute = pathname === "/" || PUBLIC_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const isPublicRoute =
+    pathname === "/" ||
+    PUBLIC_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   // ─── Loading bar refs (direct DOM manipulation = zero React re-renders = silky smooth) ───
   const barRef = useRef<HTMLDivElement>(null);
@@ -47,14 +58,17 @@ export function Navbar() {
   const isNavigatingRef = useRef(false);
 
   // ─── Directly mutate bar style — no state, no re-renders ───
-  const setBarStyle = useCallback((progress: number, visible: boolean, transition: string = "none") => {
-    const bar = barRef.current;
-    if (!bar) return;
-    bar.style.transition = transition;
-    // Use scaleX on a full-width bar — GPU-composited, never causes layout
-    bar.style.transform = `scaleX(${progress / 100})`;
-    bar.style.opacity = visible ? "1" : "0";
-  }, []);
+  const setBarStyle = useCallback(
+    (progress: number, visible: boolean, transition: string = "none") => {
+      const bar = barRef.current;
+      if (!bar) return;
+      bar.style.transition = transition;
+      // Use scaleX on a full-width bar — GPU-composited, never causes layout
+      bar.style.transform = `scaleX(${progress / 100})`;
+      bar.style.opacity = visible ? "1" : "0";
+    },
+    [],
+  );
 
   const clearTimers = useCallback(() => {
     if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
@@ -118,12 +132,20 @@ export function Navbar() {
       if (e.defaultPrevented || e.button !== 0) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
-      const anchor = (e.target as HTMLElement)?.closest("a") as HTMLAnchorElement | null;
+      const anchor = (e.target as HTMLElement)?.closest(
+        "a",
+      ) as HTMLAnchorElement | null;
       if (!anchor) return;
       if (anchor.target && anchor.target !== "_self") return;
 
       const href = anchor.getAttribute("href");
-      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+      if (
+        !href ||
+        href.startsWith("#") ||
+        href.startsWith("mailto:") ||
+        href.startsWith("tel:")
+      )
+        return;
 
       const nextUrl = new URL(href, window.location.href);
       if (nextUrl.origin !== window.location.origin) return;
@@ -155,7 +177,8 @@ export function Navbar() {
   // ─── Close user menu on outside click ───
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+      if (menuRef.current && !menuRef.current.contains(e.target as Node))
+        setUserMenuOpen(false);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -173,7 +196,6 @@ export function Navbar() {
 
   return (
     <nav className="relative h-14 border-b border-border-primary bg-surface-primary/80 backdrop-blur-md sticky top-0 z-50 flex items-center px-4 md:px-8 gap-4">
-
       {/*
         Loading bar — full width, transform-origin left, animated via scaleX.
         GPU-composited (no layout thrash), ultra smooth.
@@ -196,8 +218,7 @@ export function Navbar() {
         <button
           onClick={() => dispatch(toggleSidebar())}
           aria-label="Toggle sidebar"
-          className="p-2 text-text-secondary"
-        >
+          className="p-2 text-text-secondary">
           {sidebarCollapsed ? <HiMenuAlt4 size={20} /> : <RxCross2 size={20} />}
         </button>
       )}
@@ -225,9 +246,8 @@ export function Navbar() {
             className={cn(
               "px-3 py-2 rounded-md text-sm font-medium transition-colors",
               "text-text-secondary hover:text-text-primary hover:bg-white/[0.10]",
-              pathname.startsWith(link.href) ? "text-text-primary" : ""
-            )}
-          >
+              pathname.startsWith(link.href) ? "text-text-primary" : "",
+            )}>
             {link.label}
           </Link>
         ))}
@@ -239,12 +259,10 @@ export function Navbar() {
           ref={menuRef}
           onMouseEnter={() => setUserMenuOpen(true)}
           onMouseLeave={() => setUserMenuOpen(false)}
-          className="relative after:absolute after:top-full after:right-0 after:w-full after:h-2 after:content-['']"
-        >
+          className="relative after:absolute after:top-full after:right-0 after:w-full after:h-2 after:content-['']">
           <button
             onClick={() => setUserMenuOpen((prev) => !prev)}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-2xl text-sm font-black text-text-secondary hover:text-text-primary hover:bg-white/[0.06] transition-colors cursor-pointer"
-          >
+            className="flex items-center gap-2 px-2 py-1.5 rounded-2xl text-sm font-black text-text-secondary hover:text-text-primary hover:bg-white/[0.06] transition-colors cursor-pointer">
             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#1a73e8] to-[#1246a8] flex items-center justify-center text-white font-bold text-xs shrink-0">
               {user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
@@ -258,34 +276,61 @@ export function Navbar() {
           {userMenuOpen && (
             <div className="absolute right-0 top-[calc(100%+8px)] w-58 rounded-lg border border-border-primary bg-surface-secondary shadow-xl animate-slide-down py-1 z-50">
               <div className="px-4 py-2 border-b border-border-secondary">
-                <p className="text-base font-medium text-text-primary truncate">{user?.name}</p>
-                <p className="text-sm text-text-muted truncate">{user?.email}</p>
+                <p className="text-base font-medium text-text-primary truncate">
+                  {user?.name}
+                </p>
+                <p className="text-sm text-text-muted truncate">
+                  {user?.email}
+                </p>
               </div>
-              <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+              <Link
+                href="/dashboard"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <LayoutDashboard size={16} /> Dashboard
               </Link>
-              <Link href="/models" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
-                <Box size={17} />  Models
+              <Link
+                href="/models"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <Box size={17} /> Models
               </Link>
-              <Link href="/playground" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
-                <MessageSquare size={16} />  Playground
+              <Link
+                href="/playground"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+                <MessageSquare size={16} /> Playground
               </Link>
-              <Link href="/docs" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+              <Link
+                href="/docs"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <IoBookOutline size={16} /> Docs
               </Link>
 
               <div className="px-4 border-b border-border-primary"></div>
 
-              <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+              <Link
+                href="/settings"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <Settings size={16} /> Settings
               </Link>
-              <Link href="/usage" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+              <Link
+                href="/usage"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <BarChart3 size={16} /> Usage
               </Link>
-              <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
+              <Link
+                href="/settings"
+                onClick={() => setUserMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-white/[0.06]">
                 <CreditCard size={16} /> Credit
               </Link>
-              <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-2 text-sm text-accent-rose hover:bg-accent-rose/10 cursor-pointer">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-accent-rose hover:bg-accent-rose/10 cursor-pointer">
                 <LogOut size={16} /> Sign out
               </button>
             </div>
@@ -293,8 +338,16 @@ export function Navbar() {
         </div>
       ) : (
         <div className="flex items-center gap-2">
-          <Link href="/login" className="text-sm px-3 py-2 rounded-md font-medium text-text-secondary hover:text-text-primary hover:bg-white/[0.10] transition-colors">Sign in</Link>
-          <Link href="/signup" className="text-sm font-medium px-3 py-2 rounded-md bg-brand-500 text-white hover:bg-brand-600 transition-colors">Sign up</Link>
+          <Link
+            href="/login"
+            className="text-sm px-3 py-2 rounded-md font-medium text-text-secondary hover:text-text-primary hover:bg-white/[0.10] transition-colors">
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="text-sm font-medium px-3 py-2 rounded-md bg-brand-500 text-white hover:bg-brand-600 transition-colors">
+            Sign up
+          </Link>
         </div>
       )}
     </nav>

@@ -20,20 +20,46 @@ export default function SettingsPage() {
 
   const mutation = useMutation({
     mutationFn: (data: { name: string }) => updateUser(data),
-    onSuccess: (u) => { dispatch(setUser(u)); toast.success("Profile updated"); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Update failed"),
+    onSuccess: (u) => {
+      dispatch(setUser(u));
+      toast.success("Profile updated");
+    },
+    onError: (e) =>
+      toast.error(e instanceof Error ? e.message : "Update failed"),
   });
 
   return (
     <div className="p-4 max-w-xl mx-auto space-y-6 animate-fade-in">
-      <div><h1 className="text-lg font-semibold text-text-primary">Settings</h1><p className="text-sm text-text-muted">Manage your profile</p></div>
+      <div>
+        <h1 className="text-lg font-semibold text-text-primary">Settings</h1>
+        <p className="text-sm text-text-muted">Manage your profile</p>
+      </div>
       <Card>
-        <CardHeader><CardTitle className="flex items-center gap-2"><UserIcon size={16} className="text-brand-400" /> Profile</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <UserIcon size={16} className="text-brand-400" /> Profile
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          <form onSubmit={(e) => { e.preventDefault(); mutation.mutate({ name }); }} className="space-y-4">
-            <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              mutation.mutate({ name });
+            }}
+            className="space-y-4">
+            <Input
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
             <Input label="Email" value={user?.email || ""} disabled />
-            <Button type="submit" loading={mutation.isPending} size="sm" disabled={!canUpdate}>Save Changes</Button>
+            <Button
+              type="submit"
+              loading={mutation.isPending}
+              size="sm"
+              disabled={!canUpdate}>
+              Save Changes
+            </Button>
           </form>
         </CardContent>
       </Card>

@@ -1,9 +1,15 @@
 import Link from "next/link";
-import { Zap, Shield, BarChart3, Globe, ArrowRight, MoveRight } from "lucide-react";
+import {
+  Zap,
+  Shield,
+  BarChart3,
+  Globe,
+  ArrowRight,
+  MoveRight,
+} from "lucide-react";
 import AnimatedProviderIcon from "../../components/ui/animatedProviderIcon";
 
 export default function LandingPage() {
-
   return (
     <div className="min-h-screen px-2">
       {/* Hero */}
@@ -15,20 +21,23 @@ export default function LandingPage() {
             <span className="gradient-text">For LLMs</span>
           </h1>
           <p className="mt-5 md:text-lg text-text-secondary max-w-xl mx-auto">
-            Better <Link href="/plans" className="gradient-text">pricing</Link>, better uptime. One <span className="gradient-text">API</span> for every model.
+            Better{" "}
+            <Link href="/plans" className="gradient-text">
+              pricing
+            </Link>
+            , better uptime. One <span className="gradient-text">API</span> for
+            every model.
           </p>
           <div className="max-w-lg mx-auto grid grid-cols-1 md:grid-cols-2 items-center justify-center gap-3 mt-6">
             <Link
               href="/keys"
-              className="inline-flex min-w-55 justify-center items-center gap-2 px-6 py-2.5 rounded-md bg-brand-500 text-white font-semibold text-sm hover:bg-brand-600 transition-colors shadow-lg shadow-brand-500/25"
-            >
+              className="inline-flex min-w-55 justify-center items-center gap-2 px-6 py-2.5 rounded-md bg-brand-500 text-white font-semibold text-sm hover:bg-brand-600 transition-colors shadow-lg shadow-brand-500/25">
               Get API Key <ArrowRight size={16} />
             </Link>
 
             <Link
               href="/models"
-              className="inline-flex min-w-55 justify-center items-center gap-2 px-6 py-2.5 rounded-md border border-border-primary text-text-secondary font-semibold text-sm hover:text-text-primary hover:bg-white/[0.06] transition-all duration-200"
-            >
+              className="inline-flex min-w-55 justify-center items-center gap-2 px-6 py-2.5 rounded-md border border-border-primary text-text-secondary font-semibold text-sm hover:text-text-primary hover:bg-white/[0.06] transition-all duration-200">
               <span>Explore Models</span>
 
               <AnimatedProviderIcon />
@@ -47,7 +56,9 @@ export default function LandingPage() {
             { value: "JWT", label: "Auth" },
           ].map((stat) => (
             <div key={stat.label}>
-              <p className="text-3xl md:text-4xl font-black gradient-text">{stat.value}</p>
+              <p className="text-3xl md:text-4xl font-black gradient-text">
+                {stat.value}
+              </p>
               <p className="text-sm text-text-secondary mt-2">{stat.label}</p>
             </div>
           ))}
@@ -89,14 +100,19 @@ export default function LandingPage() {
           ].map((f) => (
             <div
               key={f.title}
-              className="rounded-xl border border-border-primary bg-surface-secondary p-5 hover:border-accent-blue transition-colors group"
-            >
+              className="rounded-xl border border-border-primary bg-surface-secondary p-5 hover:border-accent-blue transition-colors group">
               <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center mb-4">
                 <f.icon size={18} className="text-brand-400" />
               </div>
-              <h3 className="text-base font-semibold text-text-primary mb-1.5">{f.title}</h3>
-              <p className="text-sm text-text-secondary leading-relaxed mb-18">{f.desc}</p>
-              <Link href={f.href} className="flex gap-1 items-center text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors">
+              <h3 className="text-base font-semibold text-text-primary mb-1.5">
+                {f.title}
+              </h3>
+              <p className="text-sm text-text-secondary leading-relaxed mb-18">
+                {f.desc}
+              </p>
+              <Link
+                href={f.href}
+                className="flex gap-1 items-center text-sm text-brand-400 hover:text-brand-300 font-medium transition-colors">
                 {f.cta} <MoveRight size={12} />
               </Link>
             </div>
@@ -106,7 +122,9 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border-secondary py-8 px-4 text-center">
-        <p className="text-sm text-text-secondary">© 2026 oneAPI. Made with 💙 for developers.</p>
+        <p className="text-sm text-text-secondary">
+          © 2026 oneAPI. Made with 💙 for developers.
+        </p>
       </footer>
     </div>
   );

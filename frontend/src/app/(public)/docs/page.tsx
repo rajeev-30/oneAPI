@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Zap, Terminal, Code, ArrowRight } from "lucide-react";
@@ -27,9 +27,12 @@ function CodeBlock({ code, language = "javascript" }: CodeBlockProps) {
       {/* Copy Button */}
       <button
         onClick={handleCopy}
-        className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-black/40 hover:bg-black/60 text-white transition cursor-pointer"
-      >
-        {copied ? <Check className="text-accent-emerald" size={14} /> : <Copy size={14} />}
+        className="absolute top-2 right-2 z-10 flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-black/40 hover:bg-black/60 text-white transition cursor-pointer">
+        {copied ? (
+          <Check className="text-accent-emerald" size={14} />
+        ) : (
+          <Copy size={14} />
+        )}
       </button>
 
       {/* Code */}
@@ -42,8 +45,7 @@ function CodeBlock({ code, language = "javascript" }: CodeBlockProps) {
           padding: "16px",
           margin: 0,
           fontSize: "15px",
-        }}
-      >
+        }}>
         {code}
       </SyntaxHighlighter>
     </div>
@@ -54,22 +56,47 @@ export default function PublicDocsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-8 animate-fade-in">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-text-primary">API Documentation</h1>
-        <p className="text-text-muted mt-2">Everything you need to start using oneAPI</p>
+        <h1 className="text-3xl font-bold text-text-primary">
+          API Documentation
+        </h1>
+        <p className="text-text-muted mt-2">
+          Everything you need to start using oneAPI
+        </p>
       </div>
 
       <Card>
-        <div className="flex items-center gap-2 mb-4"><Zap size={16} className="text-brand-400" /><h2 className="text-base font-semibold text-text-primary">Quick Start</h2></div>
+        <div className="flex items-center gap-2 mb-4">
+          <Zap size={16} className="text-brand-400" />
+          <h2 className="text-base font-semibold text-text-primary">
+            Quick Start
+          </h2>
+        </div>
         <ol className="list-decimal list-inside space-y-2  text-text-secondary">
-          <li><Link href="/signup" className="text-brand-400 hover:underline">Create an account</Link> and subscribe to a plan</li>
+          <li>
+            <Link href="/signup" className="text-brand-400 hover:underline">
+              Create an account
+            </Link>{" "}
+            and subscribe to a plan
+          </li>
           <li>Generate an API key from your dashboard</li>
-          <li>Make requests to <code className="bg-surface-elevated px-1.5 py-0.5 rounded text-accent-blue text-xs">POST http://localhost:8000/api/v1/chat/completions</code></li>
+          <li>
+            Make requests to{" "}
+            <code className="bg-surface-elevated px-1.5 py-0.5 rounded text-accent-blue text-xs">
+              POST http://localhost:8000/api/v1/chat/completions
+            </code>
+          </li>
         </ol>
       </Card>
 
       {/* Curl Request  */}
       <Card>
-        <div className="flex items-center gap-2 mb-4"><Terminal size={16} className="text-accent-emerald" /><h2 className="text-base font-semibold text-text-primary">cURL Example</h2><Badge variant="success">bash</Badge></div>
+        <div className="flex items-center gap-2 mb-4">
+          <Terminal size={16} className="text-accent-emerald" />
+          <h2 className="text-base font-semibold text-text-primary">
+            cURL Example
+          </h2>
+          <Badge variant="success">bash</Badge>
+        </div>
         <CodeBlock
           language="bash"
           code={`curl -X POST http://localhost:8000/api/v1/chat/completions \\
@@ -81,7 +108,13 @@ export default function PublicDocsPage() {
 
       {/* javascript Fetch Example */}
       <Card>
-        <div className="flex items-center gap-2 mb-4"><Code size={16} className="text-accent-amber" /><h2 className="text-base font-semibold text-text-primary">JavaScript</h2><Badge variant="warning">fetch</Badge></div>
+        <div className="flex items-center gap-2 mb-4">
+          <Code size={16} className="text-accent-amber" />
+          <h2 className="text-base font-semibold text-text-primary">
+            JavaScript
+          </h2>
+          <Badge variant="warning">fetch</Badge>
+        </div>
         <CodeBlock
           language="javascript"
           code={`const res = await fetch("http://localhost:8000/api/v1/chat/completions", {
@@ -104,7 +137,9 @@ export default function PublicDocsPage() {
       <Card>
         <div className="flex items-center gap-2 mb-4">
           <Code size={16} className="text-accent-blue" />
-          <h2 className="text-base font-semibold text-text-primary">Response Format</h2>
+          <h2 className="text-base font-semibold text-text-primary">
+            Response Format
+          </h2>
           <Badge variant="warning">json</Badge>
         </div>
         <CodeBlock
@@ -133,8 +168,6 @@ export default function PublicDocsPage() {
         />
       </Card>
 
-
-
       {/* Extracting the Response */}
       <Card>
         <div className="flex items-center gap-2 mb-3">
@@ -145,8 +178,12 @@ export default function PublicDocsPage() {
         </div>
 
         <p className="text-text-secondary mb-4">
-          After calling the API, you can extract the AI-generated message from the response object.
-          The content is available inside <code className="bg-surface-elevated px-1 py-0.5 rounded text-xs">data.data.choices[0].message.content</code>.
+          After calling the API, you can extract the AI-generated message from
+          the response object. The content is available inside{" "}
+          <code className="bg-surface-elevated px-1 py-0.5 rounded text-xs">
+            data.data.choices[0].message.content
+          </code>
+          .
         </p>
 
         <CodeBlock
@@ -165,18 +202,28 @@ console.log(message);`}
       <Card>
         <div className="flex items-center gap-2 mb-4">
           <Terminal size={16} className="text-accent-emerald" />
-          <h2 className="text-base font-semibold text-text-primary">Assistant Prefill</h2>
+          <h2 className="text-base font-semibold text-text-primary">
+            Assistant Prefill
+          </h2>
           <Badge>advanced</Badge>
         </div>
 
         <p className="text-text-secondary mb-4">
-          oneAPI supports asking models to complete a partial response. This can be useful for guiding models to respond in a certain way.
+          oneAPI supports asking models to complete a partial response. This can
+          be useful for guiding models to respond in a certain way.
         </p>
         <p className="text-text-secondary mb-4">
-          To use this features, simply include a message with <span className="text-brand-400 hover:underline" >role: "assistant"</span> at the end of your  <span className="text-brand-400 hover:underline" >messages</span> array.
+          To use this features, simply include a message with{" "}
+          <span className="text-brand-400 hover:underline">
+            role: "assistant"
+          </span>{" "}
+          at the end of your{" "}
+          <span className="text-brand-400 hover:underline">messages</span>{" "}
+          array.
         </p>
 
-        <CodeBlock language="javascript"
+        <CodeBlock
+          language="javascript"
           code={`fetch("http://localhost:8000/api/v1/chat/completions", {
   method: "POST",
   headers: {

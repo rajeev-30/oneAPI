@@ -22,9 +22,8 @@ export const ChatMessage = memo(function ChatMessage({
     <div
       className={cn(
         "group w-full px-3 sm:px-4 py-4 sm:py-6 transition-colors duration-150",
-        isUser ? "bg-transparent" : "bg-transparent"
-      )}
-    >
+        isUser ? "bg-transparent" : "bg-transparent",
+      )}>
       <div className="max-w-3xl mx-auto">
         {isUser ? (
           /* ── User message ─────────────────────────────────── */
@@ -34,9 +33,8 @@ export const ChatMessage = memo(function ChatMessage({
                 "relative max-w-[92%] sm:max-w-[85%] px-4 py-3 rounded-2xl rounded-br-sm",
                 "bg-[#2F2F2F] text-[#ECECEC]",
                 "text-[14px] sm:text-[15px] leading-[1.65] font-normal tracking-[0.01em]",
-                "shadow-sm"
-              )}
-            >
+                "shadow-sm",
+              )}>
               <p className="whitespace-pre-wrap m-0">{message.content}</p>
             </div>
           </div>
@@ -82,8 +80,7 @@ export const ChatMessage = memo(function ChatMessage({
 
                   // Links
                   "[&_a]:text-[#c084fc] [&_a]:underline [&_a]:underline-offset-2 [&_a]:decoration-[#c084fc]/40 [&_a:hover]:decoration-[#c084fc]",
-                )}
-              >
+                )}>
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -93,18 +90,14 @@ export const ChatMessage = memo(function ChatMessage({
 
                       if (match) {
                         return (
-                          <CodeBlock
-                            code={codeString}
-                            language={match[1]}
-                          />
+                          <CodeBlock code={codeString} language={match[1]} />
                         );
                       }
 
                       return (
                         <code
                           className="bg-[#2a2a2a] border border-[#3d3d3d] px-[5px] py-[2px] rounded-[5px] text-[0.83em] text-[#79c0ff] font-mono font-normal"
-                          {...rest}
-                        >
+                          {...rest}>
                           {children}
                         </code>
                       );
@@ -120,8 +113,7 @@ export const ChatMessage = memo(function ChatMessage({
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#c084fc] underline underline-offset-2 decoration-[#c084fc]/40 hover:decoration-[#c084fc] transition-colors"
-                        >
+                          className="text-[#c084fc] underline underline-offset-2 decoration-[#c084fc]/40 hover:decoration-[#c084fc] transition-colors">
                           {children}
                         </a>
                       );
@@ -172,8 +164,7 @@ export const ChatMessage = memo(function ChatMessage({
                         </ol>
                       );
                     },
-                  }}
-                >
+                  }}>
                   {message.content}
                 </ReactMarkdown>
 

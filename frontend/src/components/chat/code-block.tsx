@@ -30,9 +30,8 @@ export const CodeBlock = memo(function CodeBlock({
       className={cn(
         "relative group rounded-lg overflow-hidden border border-border-primary my-3",
         "md:w-full w-100 mx-auto max-w-full", // prevent overflow on mobile
-        className
-      )}
-    >
+        className,
+      )}>
       {/* Header */}
       <div className="flex items-center justify-between px-3 sm:px-4 py-1.5 sm:py-2 bg-surface-primary border-b border-border-primary">
         <span className="text-[11px] sm:text-xs text-text-muted font-mono truncate mr-2">
@@ -40,8 +39,7 @@ export const CodeBlock = memo(function CodeBlock({
         </span>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs text-text-muted hover:text-text-primary transition-colors cursor-pointer flex-shrink-0"
-        >
+          className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs text-text-muted hover:text-text-primary transition-colors cursor-pointer flex-shrink-0">
           {copied ? (
             <>
               <Check size={12} className="text-accent-emerald" />
@@ -66,18 +64,18 @@ export const CodeBlock = memo(function CodeBlock({
           style={oneDark}
           customStyle={{
             margin: 0,
-            padding: "0.75rem",       // tighter on all screens
+            padding: "0.75rem", // tighter on all screens
             background: "var(--color-surface-secondary)",
-            fontSize: "0.75rem",      // slightly smaller base; up to 0.8125rem on sm via wrapper
+            fontSize: "0.75rem", // slightly smaller base; up to 0.8125rem on sm via wrapper
             lineHeight: "1.6",
-            minWidth: "100%",         // ensures scroll works correctly
+            minWidth: "100%", // ensures scroll works correctly
           }}
           codeTagProps={{
             style: {
-              fontFamily: '"JetBrains Mono", "Fira Code", ui-monospace, monospace',
+              fontFamily:
+                '"JetBrains Mono", "Fira Code", ui-monospace, monospace',
             },
-          }}
-        >
+          }}>
           {code}
         </SyntaxHighlighter>
       </div>

@@ -50,8 +50,7 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (!isStreaming)
-        handleSend();
+      if (!isStreaming) handleSend();
     }
   }
 
@@ -63,9 +62,8 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
           "bg-surface-secondary  rounded-2xl",
           "border border-[#2e2e2e] hover:border-[#3a3a3a]",
           "shadow-lg transition-colors duration-150",
-          "focus-within:border-[#3a3a3a]"
-        )}
-      >
+          "focus-within:border-[#3a3a3a]",
+        )}>
         {/* ── Textarea ─────────────────────────────────────── */}
         <textarea
           ref={textareaRef}
@@ -80,7 +78,7 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
             "text-[15px] text-[#e0e0e0] placeholder:text-[#404040]",
             "px-4 pt-4 pb-2",
             "leading-relaxed",
-            "disabled:opacity-50"
+            "disabled:opacity-50",
           )}
           style={{ minHeight: "52px", maxHeight: "200px" }}
         />
@@ -93,10 +91,9 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
             className={cn(
               "flex items-center justify-center w-8 h-8 rounded-lg cursor-pointer cursor-not-allowed",
               "text-[#555] hover:text-[#aaa] hover:bg-[#2a2a2a]",
-              "transition-all duration-150"
+              "transition-all duration-150",
             )}
-            title="Attach file"
-          >
+            title="Attach file">
             <Paperclip size={16} />
           </button>
 
@@ -107,23 +104,26 @@ export function ChatInput({ onSend, onStop, disabled }: ChatInputProps) {
 
             {/* Send button */}
             {isStreaming ? (
-            <button onClick={onStop} className="flex-shrink-0 p-2 rounded-lg bg-text-primary text-surface-primary hover:bg-text-secondary transition-colors cursor-pointer"><Square size={14} fill="currentColor" /></button>
-          ) : (
-            <button
-              onClick={handleSend}
-              disabled={!canSend}
-              className={cn(
-                "flex items-center justify-center w-8 h-8 rounded-lg",
-                "transition-all duration-150",
-                canSend
-                  // ? "bg-[#cc785c] hover:bg-[#b8664a] text-white shadow-md hover:shadow-[#cc785c]/30"
-                  ? "bg-text-primary text-surface-primary hover:bg-text-secondary cursor-pointer"
-                  : "bg-[#2a2a2a] text-[#444] cursor-not-allowed"
-              )}
-            >
-              <ArrowUp size={16} strokeWidth={2.5} />
-            </button>
-          )}
+              <button
+                onClick={onStop}
+                className="flex-shrink-0 p-2 rounded-lg bg-text-primary text-surface-primary hover:bg-text-secondary transition-colors cursor-pointer">
+                <Square size={14} fill="currentColor" />
+              </button>
+            ) : (
+              <button
+                onClick={handleSend}
+                disabled={!canSend}
+                className={cn(
+                  "flex items-center justify-center w-8 h-8 rounded-lg",
+                  "transition-all duration-150",
+                  canSend
+                    ? // ? "bg-[#cc785c] hover:bg-[#b8664a] text-white shadow-md hover:shadow-[#cc785c]/30"
+                      "bg-text-primary text-surface-primary hover:bg-text-secondary cursor-pointer"
+                    : "bg-[#2a2a2a] text-[#444] cursor-not-allowed",
+                )}>
+                <ArrowUp size={16} strokeWidth={2.5} />
+              </button>
+            )}
           </div>
         </div>
       </div>

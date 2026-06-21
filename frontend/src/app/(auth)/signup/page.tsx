@@ -11,7 +11,7 @@ import { Mail, Lock, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";
-import icon from '../../icon.png';
+import icon from "../../icon.png";
 
 export default function SignupPage() {
   const searchParams = useSearchParams();
@@ -21,7 +21,11 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    password?: string;
+  }>({});
 
   const redirectUrl: string = searchParams.get("redirect") || "/dashboard";
 
@@ -66,18 +70,52 @@ export default function SignupPage() {
       </div>
       <div className="rounded-2xl border border-border-primary bg-surface-secondary p-6 shadow-2xl">
         <div className="text-center mb-6">
-          <h1 className="text-lg font-semibold text-text-primary">Create your account</h1>
-          <p className="text-sm text-text-muted mt-1">Get started with oneAPI</p>
+          <h1 className="text-lg font-semibold text-text-primary">
+            Create your account
+          </h1>
+          <p className="text-sm text-text-muted mt-1">
+            Get started with oneAPI
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" error={errors.name} icon={<UserIcon size={16} />} autoFocus />
-          <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" error={errors.email} icon={<Mail size={16} />} />
-          <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" error={errors.password} icon={<Lock size={16} />} />
-          <Button type="submit" loading={loading} className="w-full" size="lg">Create Account</Button>
+          <Input
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name"
+            error={errors.name}
+            icon={<UserIcon size={16} />}
+            autoFocus
+          />
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            error={errors.email}
+            icon={<Mail size={16} />}
+          />
+          <Input
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            error={errors.password}
+            icon={<Lock size={16} />}
+          />
+          <Button type="submit" loading={loading} className="w-full" size="lg">
+            Create Account
+          </Button>
         </form>
         <p className="text-sm text-text-muted text-center mt-6">
           Already have an account?{" "}
-          <Link href={`/login?redirect=${redirectUrl}`} className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Sign in</Link>
+          <Link
+            href={`/login?redirect=${redirectUrl}`}
+            className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
+            Sign in
+          </Link>
         </p>
       </div>
     </div>
