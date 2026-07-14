@@ -14,7 +14,7 @@ export const SignUp = async (req: Request, res: Response) => {
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
             secure: process.env.NODE_ENV === "production",
-            sameSite: 'strict',
+            sameSite: 'none',
         })
         .json({
             message: "User registered successfully",
@@ -39,7 +39,7 @@ export const Login = async (req: Request, res: Response)=> {
             httpOnly:true, 
             maxAge: 30 * 24 * 60 * 60 * 1000,
             secure: process.env.NODE_ENV === "production",
-            sameSite: 'strict',
+            sameSite: 'none',
         })
         .json({
             message: "User logged in successfully",
@@ -57,7 +57,7 @@ export const Logout  = async(_req: Request, res: Response) => {
         .clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "none",
         })
         .json({
             message: "You logged out successfully",
