@@ -1,8 +1,9 @@
 import axios from "axios";
 import type { ApiResponse } from "@/types";
+import { API_BASE_URL } from "../constants";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:8000/api/v1",
+  baseURL: API_BASE_URL,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
@@ -13,9 +14,10 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") window.location.href = "/login";
     }
-    const msg = error.response?.data?.message || error.message || "Request failed";
+    const msg =
+      error.response?.data?.message || error.message || "Request failed";
     return Promise.reject(new Error(msg));
-  }
+  },
 );
 
 export function extractData<T>(response: { data: ApiResponse<T> }): T {
@@ -25,7 +27,10 @@ export function extractData<T>(response: { data: ApiResponse<T> }): T {
 
 export function extractPaginated<T>(response: { data: ApiResponse<T> }) {
   if (!response.data.success) throw new Error(response.data.message);
-  return { data: response.data.data as T, pagination: response.data.pagination! };
+  return {
+    data: response.data.data as T,
+    pagination: response.data.pagination!,
+  };
 }
 
 export default apiClient;

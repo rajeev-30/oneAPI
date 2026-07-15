@@ -1,7 +1,10 @@
 import apiClient, { extractData, extractPaginated } from "./client";
 import type { User } from "@/types";
 
-export async function login(data: { email: string; password: string }): Promise<User> {
+export async function login(data: {
+  email: string;
+  password: string;
+}): Promise<User> {
   const res = await apiClient.post("/user/login", data);
   return extractData<User>(res);
 }
