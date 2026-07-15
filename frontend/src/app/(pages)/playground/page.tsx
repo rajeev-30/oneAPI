@@ -36,6 +36,7 @@ import { deleteConversation } from "@/lib/api/conversations";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { toggleSidebar } from "@/store/slices/uiSlice";
+import type { Message } from "@/types";
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
@@ -160,7 +161,7 @@ export default function ChatPage() {
           const latest = store.getState().chat.messages;
           const last = latest[latest.length - 1];
           if (last?.role === "assistant") {
-            const messagesToSave = isNewConversation
+            const messagesToSave: Message[] = isNewConversation
               ? [{ role: "assistant", content: last.content }]
               : [
                   { role: "user", content },
