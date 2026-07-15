@@ -68,6 +68,11 @@ export interface Model {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+  is_free?: boolean;
+  context_length?: number;
+  uptime?: number;
+  description?: string;
+  capabilities?: string[];
 }
 
 // ─── Conversation ─────────────────────────────────────

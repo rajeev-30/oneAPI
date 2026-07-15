@@ -383,9 +383,9 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                 </div>
 
                 {/* Description */}
-                {detailModel.description && (
+                {detailModel?.description && (
                   <p className="text-[12.5px] text-[#777] leading-relaxed mb-5 line-clamp-4">
-                    {detailModel.description}
+                    {detailModel?.description}
                   </p>
                 )}
 
@@ -395,42 +395,42 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                     <StatRow
                       label="Context"
                       value={
-                        detailModel.context_length
-                          ? `${(detailModel.context_length / 1000).toFixed(0)}K tokens`
+                        detailModel?.context_length
+                          ? `${(detailModel?.context_length / 1000).toFixed(0)}K tokens`
                           : "—"
                       }
                     />
                     <StatRow
                       label="Input"
                       value={
-                        detailModel.billing?.inputCostPer1KTokens
-                          ? `₹${Number(detailModel.billing.inputCostPer1KTokens).toFixed(2)} / K`
+                        detailModel?.billing?.inputCostPer1KTokens
+                          ? `₹${Number(detailModel?.billing?.inputCostPer1KTokens).toFixed(2)} / K`
                           : "Free"
                       }
                     />
                     <StatRow
                       label="Output"
                       value={
-                        detailModel.billing?.outputCostPer1KTokens
-                          ? `₹${Number(detailModel.billing.outputCostPer1KTokens).toFixed(2)} / K`
+                        detailModel?.billing?.outputCostPer1KTokens
+                          ? `₹${Number(detailModel?.billing?.outputCostPer1KTokens).toFixed(2)} / K`
                           : "Free"
                       }
                     />
-                    {typeof detailModel.uptime === "number" && (
+                    {typeof detailModel?.uptime === "number" && (
                       <div className="flex items-center justify-between py-2.5">
                         <span className="text-xs text-[#666] font-medium tracking-wide uppercase">
                           Uptime
                         </span>
-                        <UptimeBar value={detailModel.uptime} />
+                        <UptimeBar value={detailModel?.uptime} />
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* Capabilities */}
-                {detailModel.capabilities?.length > 0 && (
+                {detailModel?.capabilities && detailModel?.capabilities?.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {detailModel.capabilities.map((cap: string) => (
+                    {detailModel?.capabilities.map((cap: string) => (
                       <span
                         key={cap}
                         className="text-[10px] font-medium px-2 py-1 rounded-md bg-[#1e1e1e] border border-[#2a2a2a] text-[#666]">
