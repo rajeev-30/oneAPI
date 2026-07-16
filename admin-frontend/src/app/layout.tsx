@@ -3,7 +3,7 @@ import { Providers } from "@/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "oneAPI Admin",
+  title: "Admin | oneAPI",
   description: "Admin dashboard for the oneAPI platform",
 };
 
