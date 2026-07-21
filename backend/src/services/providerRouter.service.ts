@@ -6,6 +6,7 @@ import { googleChat } from "@services/google.service";
 import { groqChat } from "@services/groq.service";
 import { openaiChat } from "./openai.service";
 import { AppError } from "../types/errors";
+import { openrouterChat } from "./openrouter.service";
 
 
 interface RouteOptions {
@@ -38,6 +39,9 @@ export async function* routeToProvider(options: RouteOptions): AsyncGenerator<Ch
             break;
         case "openai":            
             yield* openaiChat(options);
+            break;
+        case "openrouter":
+            yield* openrouterChat(options);
             break;
         default:
             throw new AppError(`'${providerSlug}' is not supported yet`, 400, "NOT_SUPPORTED", "Please choose a different model");

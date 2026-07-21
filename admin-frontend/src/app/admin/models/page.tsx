@@ -33,8 +33,8 @@ function Modal({
     name: m?.name || "",
     slug: m?.slug || "",
     provider:
-      typeof m?.provider === "object" ? m.provider._id : m?.provider || "",
-    billing: typeof m?.billing === "object" ? m.billing._id : m?.billing || "",
+      typeof m?.provider === "object" ? m.provider?._id : m?.provider || "",
+    billing: typeof m?.billing === "object" ? m.billing?._id : m?.billing || "",
   });
   const valid = f.name && f.slug && f.provider && f.billing;
   return (

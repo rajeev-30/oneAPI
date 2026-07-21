@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ oneAPI
+# oneAPI
 
 ### The Universal AI Gateway — One API, Every Model
 
@@ -9,7 +9,6 @@
 [![Express](https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7.0+-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-14+-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 Access **multiple AI models** from **different providers** through a single, unified, OpenAI-compatible API.
 Stop juggling multiple API keys, SDKs, and billing dashboards.
@@ -26,7 +25,7 @@ Stop juggling multiple API keys, SDKs, and billing dashboards.
 
 ## 🚀 What is oneAPI?
 
-**oneAPI** is an open-source AI model gateway and routing platform — similar to [OpenRouter](https://openrouter.ai/). It acts as a single entry point to interact with hundreds of large language models (LLMs) from providers like OpenAI, Anthropic, Google, Meta, Mistral, and more.
+**oneAPI** is an open-source AI model gateway and routing platform — It acts as a single entry point to interact with hundreds of large language models (LLMs) from providers like OpenAI, Anthropic, Google, Meta, Mistral, and more.
 
 ```
 Your App ──► oneAPI API ──► Best Provider (OpenAI, Anthropic, Google...)
@@ -159,52 +158,8 @@ POST /api/v1/chat/completions
 #### Models
 
 ```bash
-GET    /api/v1/models              # List all available models
-GET    /api/v1/models/:slug        # Get model details
-```
-
-#### API Keys
-
-```bash
-POST   /api/v1/keys                # Create new API key
-GET    /api/v1/keys                # List your API keys
-PATCH  /api/v1/keys/:id            # Update API key
-DELETE /api/v1/keys/:id            # Revoke API key
-```
-
-#### Usage & Analytics
-
-```bash
-GET    /api/v1/usage               # Get usage stats
-GET    /api/v1/usage/costs         # Cost breakdown by model
-GET    /api/v1/usage/activity      # Request activity timeline
-```
-
-#### Auth
-
-```bash
-POST   /api/v1/auth/register       # Register new account
-POST   /api/v1/auth/login          # Login
-POST   /api/v1/auth/logout         # Logout
-POST   /api/v1/auth/refresh        # Refresh token
-GET    /api/v1/auth/me             # Get current user
-```
-
-#### Organizations
-
-```bash
-POST   /api/v1/orgs                # Create organization
-GET    /api/v1/orgs                # List your organizations
-POST   /api/v1/orgs/:id/members    # Invite member
-DELETE /api/v1/orgs/:id/members/:uid # Remove member
-```
-
-#### Wallet & Billing
-
-```bash
-GET    /api/v1/wallet              # Get balance
-POST   /api/v1/wallet/deposit      # Add credits (Stripe)
-GET    /api/v1/wallet/transactions  # Transaction history
+GET    /api/v1/model              # List all available models
+GET    /api/v1/model/:slug        # Get model details
 ```
 
 > For full API docs, see [`docs/API.md`](docs/API.md) or visit `/api-docs` (Swagger UI) when running locally.
@@ -276,7 +231,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 feat:     New feature
-fix:      Bug fix
+fix:       Bug fix
 docs:     Documentation changes
 style:    Code style (formatting, semicolons, etc.)
 refactor: Code refactoring
@@ -290,7 +245,6 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ## 🙏 Acknowledgements
 
-- Inspired by [OpenRouter](https://openrouter.ai/)
 - Built with [Express](https://expressjs.com/), [Next.js](https://nextjs.org/), [MongoDB](https://www.mongodb.com/)
 - Icons by [Lucide](https://lucide.dev/)
 

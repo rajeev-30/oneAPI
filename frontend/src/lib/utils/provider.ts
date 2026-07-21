@@ -1,4 +1,4 @@
-import { OpenAI, Gemini, Claude, Groq, Nvidia} from '@lobehub/icons';
+import { OpenAI, Gemini, Claude, Groq, Nvidia, OpenRouter} from '@lobehub/icons';
 import { Bot } from 'lucide-react';
 
 export const PROVIDER_CONFIG: Record<string, {label: string, icon: any}> = {
@@ -8,4 +8,5 @@ export const PROVIDER_CONFIG: Record<string, {label: string, icon: any}> = {
   anthropic: {label: "Anthropic", icon: Claude?.Color || Claude},
   groq: {label: "Groq", icon: Groq},
   nvidia: {label: "Nvidia", icon: Nvidia?.Color || Nvidia},
+  openrouter: {label: "OpenRouter", icon: OpenRouter},
 };
