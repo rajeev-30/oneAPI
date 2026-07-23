@@ -20,7 +20,7 @@ function getProviderKey(slug: string): string {
 }
 
 function getProviderIcon(key: string): any {
-  return PROVIDER_CONFIG[key].icon ?? Bot;
+  return PROVIDER_CONFIG[key]?.icon ?? Bot;
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -257,7 +257,7 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
           </div>
 
           {/* Provider tabs */}
-          <div className="flex gap-1.5 px-3 py-2 border-b border-[#222] overflow-x-auto scrollbar-none flex-wrap">
+          {/* <div className="flex gap-1.5 px-3 py-2 border-b border-[#222] overflow-x-auto scrollbar-none flex-wrap">
             {availableProviders.slice(0, 4).map((key) => {
               const Icon = getProviderIcon(key);
               const isActive = activeProvider === key;
@@ -278,7 +278,7 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                 </button>
               );
             })}
-          </div>
+          </div> */}
 
           {/* Model list */}
           <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-[#2a2a2a] scrollbar-track-transparent">
@@ -290,13 +290,14 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
             ) : (
               Object.entries(grouped).map(([group, items]) => (
                 <div key={group}>
-                  <div className="px-3 pt-3 pb-1">
+                  {/* <div className="px-3 pt-3 pb-1">
                     <span className="text-[10px] font-semibold text-[#444] uppercase tracking-widest">
                       {group}
                     </span>
-                  </div>
+                  </div> */}
                   {items.map((model) => {
-                    const pKey = getProviderKey(model.provider?.slug ?? "");
+                    // const pKey = getProviderKey(model.provider?.slug ?? "");
+                    const pKey = model?.slug?.split("/")[0]?.toLowerCase();
                     const Icon = getProviderIcon(pKey);
                     const isSelected = model.slug === selectedModel;
                     const isHovered = model.slug === hoveredModel;
@@ -333,7 +334,8 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                             )}
                           </div>
                           <span className="text-[11px] text-[#555] truncate block">
-                            {model.provider?.name}
+                            {/* {model.provider?.name} */}
+                            {pKey}
                           </span>
                         </div>
 
@@ -362,8 +364,8 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                       "bg-[#1e1e1e] border border-[#2e2e2e]",
                     )}>
                     {(() => {
-                      const Icon =
-                        PROVIDER_CONFIG[detailModel.provider?.slug].icon;
+                      const pKey = detailModel?.slug?.split("/")[0]?.toLowerCase() || "other";
+                      const Icon = getProviderIcon(pKey);
                       // You must return the result
                       return Icon ? (
                         <Icon size={18} />
@@ -377,7 +379,8 @@ export function ModelSelector({ standalone = false }: ModelSelectorProps) {
                       {detailModel.name}
                     </h3>
                     <p className="text-[12px] text-[#555] mt-0.5">
-                      {detailModel.provider?.name}
+                      {/* {detailModel.provider?.name} */}
+                      {detailModel?.slug?.split("/")[0]?.toUpperCase() || "OTHER"}
                     </p>
                   </div>
                 </div>

@@ -12,7 +12,7 @@ export async function* anthropicChat({ model, messages, temperature, max_tokens 
 
     const client = new Anthropic({ apiKey });
 
-    const modelName = model.slug; 
+    const modelName = model.slug.split("/")[1]; 
 
     //separate system message from user/assistant messages
     const systemMessage = messages.find((msg: any) => msg.role === "system")?.content;

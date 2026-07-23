@@ -11,7 +11,7 @@ export async function* googleChat({ model, messages, temperature, max_tokens }: 
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    const modelName = model.slug; 
+    const modelName = model.slug.split("/")[1];
     const genModel  = genAI.getGenerativeModel({ model: modelName });
 
 

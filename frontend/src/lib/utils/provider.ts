@@ -1,4 +1,24 @@
-import { OpenAI, Gemini, Claude, Groq, Nvidia, OpenRouter} from '@lobehub/icons';
+import { 
+  OpenAI, 
+  Gemini, 
+  Claude, 
+  Groq, 
+  Nvidia, 
+  OpenRouter,
+  DeepSeek,
+  Mistral,
+  Moonshot,
+  Stepfun,
+  Minimax,
+  ZAI,
+  Poolside,
+  Aya,
+  Microsoft,
+  TII,
+  Qwen,
+  LlamaIndex,
+  Meta
+} from '@lobehub/icons';
 import { Bot } from 'lucide-react';
 
 export const PROVIDER_CONFIG: Record<string, {label: string, icon: any}> = {
@@ -8,5 +28,18 @@ export const PROVIDER_CONFIG: Record<string, {label: string, icon: any}> = {
   anthropic: {label: "Anthropic", icon: Claude?.Color || Claude},
   groq: {label: "Groq", icon: Groq},
   nvidia: {label: "Nvidia", icon: Nvidia?.Color || Nvidia},
-  openrouter: {label: "OpenRouter", icon: OpenRouter},
+  openrouter: {label: "OpenRouter", icon: OpenRouter?.Color || OpenRouter},
+  "deepseek-ai": {label: "DeepSeek", icon: DeepSeek?.Color || DeepSeek},
+  mistralai: {label: "Mistral", icon: Mistral?.Color || Mistral},
+  moonshotai: {label: "Moonshot", icon: Moonshot},
+  "stepfun-ai": {label: "StepFun", icon: Stepfun},
+  minimaxai: {label: "Minimax", icon: Minimax?.Color || Minimax},
+  "z-ai": {label: "ZAI", icon: ZAI},
+  poolside: {label: "Poolside", icon: Poolside?.Color || Poolside},
+  cohere: {label: "Aya", icon: Aya?.Color || Aya},
+  microsoft: {label: "Microsoft", icon: Microsoft?.Color || Microsoft},
+  tiiuae: {label: "TII", icon: TII?.Color || TII},
+  qwen: {label: "Qwen", icon: Qwen?.Color || Qwen},
+  "meta-llama": {label: "LlamaIndex", icon: LlamaIndex?.Color || LlamaIndex},
+  "meta": {label: "MetaAI", icon: Meta?.Color || Meta},
 };

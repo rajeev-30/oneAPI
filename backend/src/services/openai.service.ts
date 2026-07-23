@@ -12,7 +12,7 @@ export async function* openaiChat({ model, messages, temperature, max_tokens }: 
         apiKey,
     });
     
-    const modelName = model.slug;
+    const modelName = model.slug.split("/")[1];
     
     const chatMessages  = messages.map((msg: any) => ({
         role:    msg.role as "user" | "assistant" | "system",

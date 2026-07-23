@@ -93,14 +93,14 @@ export default function PublicModelsPage() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* <div className="flex items-center gap-2 flex-wrap">
         <button
           onClick={() => up("provider", "")}
           className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors cursor-pointer ${!provider ? "border-brand-500 bg-brand-500/10 text-brand-400" : "border-border-primary text-text-secondary hover:text-text-primary"}`}>
           All
         </button>
         {providers.map((p) => {
-          const Icon = PROVIDER_CONFIG[p].icon;
+          const Icon = PROVIDER_CONFIG[p]?.icon;
 
           return (
             <button
@@ -108,11 +108,11 @@ export default function PublicModelsPage() {
               onClick={() => up("provider", p)}
               className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors cursor-pointer flex items-center gap-1.5 ${provider === p ? "border-brand-500 bg-brand-500/10 text-brand-400" : "border-border-primary text-text-secondary hover:text-text-primary"}`}>
               <span>{Icon ? <Icon size={18} /> : "🤖"}</span>
-              {PROVIDER_CONFIG[p].label}
+              {PROVIDER_CONFIG[p]?.label || "Default"}
             </button>
           );
         })}
-      </div>
+      </div> */}
 
       {isLoading ? (
         <div className="space-y-3">
@@ -130,8 +130,8 @@ export default function PublicModelsPage() {
       ) : (
         <div className="space-y-2">
           {filtered.map((model) => {
-            const Icon =
-              PROVIDER_CONFIG[model.provider?.slug?.toLowerCase() || ""]?.icon;
+            const provider = model?.slug.split("/")[0] || model?.provider?.slug?.toLowerCase() || "";
+            const Icon = PROVIDER_CONFIG[provider]?.icon;
 
             return (
               <div
@@ -147,9 +147,9 @@ export default function PublicModelsPage() {
                       {model.name}
                     </h3>
 
-                    <Badge variant="info" className="text-xs">
-                      {model.provider?.name}
-                    </Badge>
+                    {/* <Badge variant="info" className="text-xs">
+                      {provider}
+                    </Badge> */}
 
                     <button
                       onClick={() => handleCopy(model.slug, model._id)}
